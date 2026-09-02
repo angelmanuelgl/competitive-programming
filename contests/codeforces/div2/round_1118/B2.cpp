@@ -1,11 +1,11 @@
 /*  
     * Contest: Codeforces Round 1118 (Div. 2)
-    * https://codeforces.com/contest/2258
+    * URL: https://codeforces.com/contest/2258
     * Problem: B2. Carrot Chopdown (Hard Version)
 
-    * topic: 
+    * Topic: 
     * Algorithm: 
-    * Complexity: O( n log n)
+    * Complexity: O( M log M)
 
     * Status: in process
     * angelmanuelgl
