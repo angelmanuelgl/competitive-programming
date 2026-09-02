@@ -1,0 +1,26 @@
+# Executables & Compiled binaries
+*.o
+*.exe
+*.out
+*.a
+*.so
+*.dylib
+
+# Temporary & Editor backup files
+*.save-failed
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Test case clutter
+in.txt
+inD.txt
+casosE.txt
+texto.txt
+xd.cpp
+
+# IDE & Build folders
+.vscode/
+.idea/
+build/
