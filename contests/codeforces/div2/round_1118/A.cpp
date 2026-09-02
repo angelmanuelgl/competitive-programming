@@ -1,8 +1,13 @@
 /*  
-    * contest: Codeforces Round 1118 (Div. 2)
-    * problem: A. Odd Eraser
-    * topic: 
+    * Contest: Codeforces Round 1118 (Div. 2)
     * https://codeforces.com/contest/2258
+    * Problem: A. Odd Eraser
+
+    * topic: 
+    * Algorithm: 
+    * Complexity: 
+
+    * Status: ACCEPT
     * angelmanuelgl
 */
 #include<bits/stdc++.h>

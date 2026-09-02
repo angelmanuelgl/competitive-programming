@@ -1,8 +1,13 @@
 /*  
-    * contest: Codeforces Round 1118 (Div. 2)
-    * problem: B1. Carrot Chopdown (Easy Version)
-    * topic: 
+    * Contest: Codeforces Round 1118 (Div. 2)
     * https://codeforces.com/contest/2258
+    * Problem: B1. Carrot Chopdown (Easy Version)
+
+    * topic: 
+    * Algorithm: 
+    * Complexity: O(M)
+
+    * Status: ACCEPT
     * angelmanuelgl
 */
 #include<bits/stdc++.h>

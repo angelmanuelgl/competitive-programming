@@ -1,8 +1,13 @@
 /*  
-    * contest: Codeforces Round 1118 (Div. 2)
-    * problem: B2. Carrot Chopdown (Hard Version)
-    * topic: 
+    * Contest: Codeforces Round 1118 (Div. 2)
     * https://codeforces.com/contest/2258
+    * Problem: B2. Carrot Chopdown (Hard Version)
+
+    * topic: 
+    * Algorithm: 
+    * Complexity: O( n log n)
+
+    * Status: in process
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
