@@ -5,6 +5,7 @@
 *.a
 *.so
 *.dylib
+*.in
 
 # Temporary & Editor backup files
 *.save-failed
@@ -18,7 +19,8 @@ in.txt
 inD.txt
 casosE.txt
 texto.txt
-xd.cpp
+xd.cp
+
 
 # IDE & Build folders
 .vscode/
