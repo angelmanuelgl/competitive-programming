@@ -75,7 +75,7 @@ const int MOD = 1e9 + 7;
 // uso :  g++ -DLOCAL A.cpp
 int main(){
     #ifdef LOCAL
-        ifstream cin("in.txt");
+        ifstream cin("in.in");
     #else
         ios_base::sync_with_stdio(0); 
         cin.tie(0);

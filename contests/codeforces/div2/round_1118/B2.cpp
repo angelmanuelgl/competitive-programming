@@ -5,7 +5,7 @@
 
     * Topic: 
     * Algorithm: 
-    * Complexity: O( M log M)
+    * Complexity: O( M log**2 M)
 
     * Status: in process
     * angelmanuelgl
@@ -83,10 +83,10 @@ ll techo_log_2( ll x ){
     return exp;
 }
 
-// uso :  g++ -DLOCAL K.cpp
+// uso :  g++ -DLOCAL A.cpp
 int main(){
     #ifdef LOCAL
-        ifstream cin("in.txt");
+        ifstream cin("in.in");
     #else
         ios_base::sync_with_stdio(0); 
         cin.tie(0);
@@ -100,19 +100,20 @@ int main(){
         vll cnt(m+2, 0); 
         vll acumm(m+2, 0);
         
-        ll maxi =0, total = 0, pedazos_1 = 0, x;
+        int maxi =0;
+        ll pedazos_1 = 0, x;
         for( int i=0; i<n; i++){
             cin >> x;
             // cuantas zanahoras de cada longitud
             cnt[x]++; 
-            maxi = max(maxi, x);
-            total++;
+            maxi = max(maxi, (int) x);
             pedazos_1+=x;
         }
 
         for( int i=1; i<=m; i++){
             acumm[i] = acumm[i-1] + cnt[i];
         }
+
 
         print( cnt);
         print( acumm );
@@ -127,40 +128,56 @@ int main(){
                 continue;
             } 
 
-            // solo entramos aqui O(log m) veces
-            
             DEBUG cout << "resolviendo para  k= " <<  k << "\n";
-
-            // prrobar con cada l // O(M)
             ll ans_la_mejor = 0;
-            for( int l=1; l<=maxi; l++){
-                // haremos  k cortes de modos que se cortaran en
-                // k=1 1l 
-                // k=2 1l 2l
-                // k=3 1l 2l 3l 4l 
-                // k  1l 2l 3l ... .... ... 2**(k-1)*l
-                // en realidad eso se puede hacer con k cortes
-                DEBUG cout << " intentando l = " << l <<  "  ";
+            ll pow2_k = 1 << k;
 
-                // ver como queda partido cada bloque
-                ll ans_l = 0;
-                ll top = ((1<<(k)) -1) * l;
-                for( int cut = l ; cut <= min(maxi, top ); cut+=l){
-                    ans_l+= total - acumm[cut-1];
-                    if( 2*cut <= maxi) 
-                        ans_l += cnt[2*cut];
+
+            
+            // si k es mayor de log m entones no entra aqui
+            ////  O(log M)  
+            
+         
+            // probar con cada longitud final l hasta M/ 2**k
+
+            // digamos que esto topa hasta M 
+            for( int x=1; x<= maxi/ pow2_k; x++){
+                // nos interesa calcular 
+                // sum_{i=1}^ n c(i)
+                // con c(i) = 
+                // 2^k   si a_i = 2^k * l
+                // 2^k -1   si a_i > 2^k * l
+                // a_i/l   si a_i < 2^k * l
+
+                // esto es equivalente a
+                //  ( sum_{i=1}^ n w(i)  ) + cnt[ 2^k ]
+                // con w(i)  = min(2^k -1, a_i/l )
+
+                // lo haremos usamndo por bloques
+
+                // O( M/x)
+                ll  ans_x = 0;
+                for( int c=0; 1ll*c*x <= maxi; c++ ){
+                    int L = max(0, c* x -1);
+                    int R = min(maxi, (c+1)*x - 1);
+                    ll contador = acumm[R] - acumm[L];
+                    ans_x += ( min(1ll*c, pow2_k-1ll) * contador);
                 }
 
+                // sumar los iguales
 
-                DEBUG cout << " obteenmos " << ans_l << "\n";
+                if(  pow2_k * x  <= m )
+                    ans_x += cnt[ pow2_k * x ];
+
+                DEBUG cout << " obteenmos " << ans_x<< "\n";
                 // si con esta l fue mejor actualizamos
-                ans_la_mejor = max( ans_la_mejor, ans_l);
+                ans_la_mejor = max( ans_la_mejor, ans_x);
             }
 
             cout << ans_la_mejor <<  " ";
                 
         } // end for
         
-
+        DEBUG cout << "\n\n";
     } // end case
 }
