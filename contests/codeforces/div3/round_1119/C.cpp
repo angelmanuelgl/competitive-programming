@@ -1,11 +1,11 @@
 /*  
     * Contest: Codeforces Round 1119 (Div. 3)  (ONLINE)
     * URL: https://codeforces.com/contests/2259
-    * Problem: 
+    * Problem: C. 101
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic: greedy
+    * Algorithm: todos ceros exepeto extremos
+    * Complexity: O(N)
 
     * Status: ACCEPT
     * angelmanuelgl

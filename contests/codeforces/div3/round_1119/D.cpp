@@ -1,11 +1,11 @@
 /*  
     * Contest: Codeforces Round 1119 (Div. 3)  (ONLINE)
     * URL: https://codeforces.com/contests/2259
-    * Problem: 
+    * Problem: D. MEX Multiset
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic: constructive, greedy
+    * Algorithm: construir, separar casos segun cantidad de 0s disponibles
+    * Complexity: O(N)
 
     * Status: ACCEPT
     * angelmanuelgl
@@ -84,31 +84,6 @@ int main(){
     int t; cin >> t;
 
     while( t-- ){
-
-        // int n; cin >>  n;
-        // vi a(n), uniq;
-        // map<int,bool> check;
-        // for( int & ai : a){
-        //     cin >> ai;
-        //     if( !check.count(ai)){
-        //         checl[ai] = true;
-        //         uniq.pb(ai);
-        //     }
-        // }
-
-        // int m = sz(uniq);
-        // sort( all(uniq) );
-        // map<int, int> ai_2_idx;
-        // for( int i=0; i< m; i++){
-        //     ai_2_idx[ uniq[i]  ] = i;
-        // }
-
-        // // contar cuantas hay
-        // vi cnt(m,0);
-        // for( int i=0; i<n; i++){
-        //     cnt[ ai_2_idx[ a[i] ]  ]++;
-        // }
-
         int n; cin >> n;
         vi a(n);
         int cnt_cero = 0, cnt_no_cero= 0;

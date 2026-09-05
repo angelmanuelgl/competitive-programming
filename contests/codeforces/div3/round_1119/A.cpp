@@ -1,11 +1,11 @@
 /*  
     * Contest: Codeforces Round 1119 (Div. 3)  (ONLINE)
     * URL: https://codeforces.com/contests/2259
-    * Problem: 
+    * Problem:  A. Moo Language School
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic: greedy
+    * Algorithm: contar unos en segmetos
+    * Complexity: O(N)
 
     * Status: ACCEPT
     * angelmanuelgl

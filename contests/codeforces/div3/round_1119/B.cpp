@@ -1,11 +1,11 @@
 /*  
     * Contest: Codeforces Round 1119 (Div. 3)  (ONLINE)
     * URL: https://codeforces.com/contests/2259
-    * Problem: 
+    * Problem: B. Minus Two
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic: number theory
+    * Algorithm: contardor de numeros mod4
+    * Complexity: O(N)
 
     * Status: ACCEPT
     * angelmanuelgl

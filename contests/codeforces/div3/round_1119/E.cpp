@@ -1,11 +1,13 @@
 /*  
     * Contest: Codeforces Round 1119 (Div. 3)  (ONLINE)
     * URL: https://codeforces.com/contests/2259
-    * Problem: 
+    * Problem: E. Treasure Map Destruction (Constructive Version)
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic: constructive, greedy, segmentos en arreglo
+    * Algorithm: - identificar donde no podemos poner tesoroes
+                 - poner tesoroes en todos lugares donde podamos
+                 - verificar si fue una construccion valida
+    * Complexity: O(N)
 
     * Status: ACCEPT
     * angelmanuelgl
