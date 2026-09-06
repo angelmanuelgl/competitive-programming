@@ -9,7 +9,7 @@
                  - verificar si fue una construccion valida
     * Complexity: O(N)
 
-    * Status: ACCEPT
+    * Status: IN PROCESS
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
@@ -93,6 +93,8 @@ int main(){
             cin >> a[i];
         }
 
+        print( a);
+        
         vi intervalos(n+2,0);
         for( int i=1; i<=n; i++){
             if( a[i] <= 0) continue;
@@ -108,6 +110,8 @@ int main(){
             intervalos[R]--;           
         }
 
+        print( intervalos );
+
         // poner tesoroes en todos lugares odne podamos 
         int intervalos_aqui = intervalos[0];
         vi ans(n+2,0);
@@ -115,27 +119,34 @@ int main(){
         for( int i=1; i<=n; i++){
             intervalos_aqui += intervalos[i];
              
-            if(  (a[i] == -1 || a[i] == 0) && !intervalos_aqui ) 
+            if(  (a[i] == -1 || a[i] == 0 ) && !intervalos_aqui ) 
                 ans[i] = 1; // hay tsoro
             else ans[i] = 0;// no hay tesoro
         }
         
-        // calcular las distancias para verificar
-        vi dist_last_t(n+2, -INT_MAX);
-        int idx_last_tesoro = -INT_MAX;
+        print( ans);
 
+        // calcular las distancias para verificar
+        vll dist_last_t(n+2, INT_MAX);
+
+        // de izqu - > der
+        ll idx_last_tesoro = -INT_MAX;
         for( int i=1; i<=n; i++){
             if( ans[i] == 1) idx_last_tesoro = i;
-            dist_last_t[i] = min(dist_last_t[i],  i -idx_last_tesoro);
+            dist_last_t[i] = min(dist_last_t[i],  i - idx_last_tesoro);
         }
+        print( dist_last_t);
 
         idx_last_tesoro = INT_MAX;
         for( int i=n; i>=1; i--){
             if( ans[i] == 1) idx_last_tesoro = i;
-            dist_last_t[i] = min(dist_last_t[i],  idx_last_tesoro- i );
+            dist_last_t[i] = min(dist_last_t[i],  idx_last_tesoro - i );
         }
 
-        // verificar si se cum;le que hay dobde deberia
+        print( dist_last_t);
+
+
+        // verificar si se cumple que hay dobde deberia
         // y no hay donde no
         bool hayRespuesta = true;
         for( int i=1; i<=n; i++){
@@ -153,7 +164,9 @@ int main(){
         }
 
         
-    }
+
+        DEBUG cout << "--------------------\n";
+    } // end case
 
     
 }
