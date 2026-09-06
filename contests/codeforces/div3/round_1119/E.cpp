@@ -9,7 +9,7 @@
                  - verificar si fue una construccion valida
     * Complexity: O(N)
 
-    * Status: IN PROCESS
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
