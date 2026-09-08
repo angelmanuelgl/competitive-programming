@@ -107,7 +107,7 @@ Para ello hay que
 - [ X ] [Kaosar and Game](https://eolymp.com/en/problems/12261)
 - [ ] [Everything Nim](https://codeforces.com/contest/1965/problem/A)
 - [ ] [Stair Game](https://cses.fi/problemset/task/1099)
-- [ ] [Day 5: Final Tower Breakers](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/final-tower-breakers)
+- [ X ] [Day 5: Final Tower Breakers](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/final-tower-breakers)
 - [ ] [Day 4: Powers Game](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/powers-of-two-game/problem)
 - [ ] [UVA1482: Playing with Stones](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=4228)
 - [ ] [Marbles](https://codeforces.com/gym/101908/problem/B)
