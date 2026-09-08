@@ -1,11 +1,14 @@
 /*  
     * Contest: Game theory training sessions | CS
-    * URL: 
-    * Problem:  
+    * URL: https://eolymp.com/en/problems/12261
+    * Problem:  Kaosar And Game
 
     * Topic: Game Teory
-    * Algorithm: 
-    * Complexity: 
+    * Algorithm:  - First we identify the winning and lossing positions
+                    in the case wehere p=q=0
+                  - Then, we observe that if one playes has more
+                    "fake junmps" than the other, they can swap positions
+    * Complexity: O(1) for each query
 
     * Status: IN PROCESS
     * angelmanuelgl
@@ -81,6 +84,62 @@ int main(){
         cin.tie(0);
         cout.tie(0);
     #endif
+
+    int t; cin >> t;
+
+    while( t-- ){
+        int n, k, p, q;
+
+        cin >> n >> k >> p >> q;
+
+        // O(N)
+        // // 1 posicion ganadora // 0 posicion perdedora
+        // vector<int> posiciones(n+1,0);
+        // posiciones[n] = 1; // posicion ganadora
+
+        // // llevar le conteo de los k sigueintes
+        // int cnt_perdedoras = 0;
+        // for( int i=n-1; i>0; i--){
+        //     // si lo puedo mover a una posciion perdedoras
+        //     if( cnt_perdedoras > 0 ) posiciones[i] = 1;
+        //     else posiciones[i] = 0;
+            
+            
+        //     if( posiciones[i] == 0 ) cnt_perdedoras++;
+        //     if(  i+ k < n  && posiciones[i+k] == 0 ) cnt_perdedoras--;
+
+        // }
+        // print(n); print(k);
+        // print(posiciones);
+
+
+        // imrpimiendo el patron podemos ver que 
+        // las ppsicines perdedoras son
+        // las congruentes con 1 mod k+1
+        // esto lo podemos verificar en O(1)
+
+        // la posicion n enreliad es con idx 1
+        // la posicion n-1 le queda idx 2
+        // ... 
+        // la posocion 2 le queda idx n-1
+        // la posicion 1 le queda idx n
+
+        // queremos saber si la posicion 1 ocn idx n es ganadora
+
+        // si comienzo en  una posicion ganadora
+        // y tengo almenos la misma cantidad de comodines que el
+        if(  ( n% (k+1) != 0 )  && (p>=q)   ){
+            cout << "YES\n";
+            continue;
+        }
+        // si empeizo en una posicion perdedora
+        // pero tengo mas comodines que el
+        if(  ( n% (k+1) == 0 )  && (p>q)   ){
+            cout << "YES\n";
+            continue;
+        }
+        cout << "NO\n";
+    }
 
     
 }

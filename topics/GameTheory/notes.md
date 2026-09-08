@@ -103,8 +103,8 @@ Para ello hay que
 
 ### 7.1 Obligatorios
 
-- [ ] [MEX Game 1](https://codeforces.com/contest/1943/problem/A)
-- [ ] [Kaosar and Game](https://eolymp.com/en/problems/12261)
+- [ X ] [MEX Game 1](https://codeforces.com/contest/1943/problem/A)
+- [ X ] [Kaosar and Game](https://eolymp.com/en/problems/12261)
 - [ ] [Everything Nim](https://codeforces.com/contest/1965/problem/A)
 - [ ] [Stair Game](https://cses.fi/problemset/task/1099)
 - [ ] [Day 5: Final Tower Breakers](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/final-tower-breakers)
