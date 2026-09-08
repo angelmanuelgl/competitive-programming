@@ -10,7 +10,7 @@
                     "fake junmps" than the other, they can swap positions
     * Complexity: O(1) for each query
 
-    * Status: IN PROCESS
+    * Status: ACCEPTs
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
