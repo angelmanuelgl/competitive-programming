@@ -1,13 +1,13 @@
 /*  
     * Contest: Game theory training sessions | CS
-    * URL: 
-    * Problem:  
+    * URL: https://codeforces.com/contest/1965/problem/A
+    * Problem:  A. Everything Nim
 
     * Topic: Game Teory
-    * Algorithm: 
-    * Complexity: 
+    * Algorithm: Fijarse en quien realizara el primer movimiento no forzoso
+    * Complexity: O(N)
 
-    * Status: IN PROCESS
+    * Status: ACCEPT (30 min)
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
@@ -76,11 +76,51 @@ const int MOD = 1e9 + 7;
 int main(){
     #ifdef LOCAL
         ifstream cin("in.in");
+        const int MAXN = 10;
     #else
         ios_base::sync_with_stdio(0); 
         cin.tie(0);
         cout.tie(0);
+        const int MAXN = 200009;
     #endif
+
+    int t; cin >> t;
+
+    while( t-- ){
+        int n; cin >> n;
+
+
+        vector<bool> check(MAXN, false);
+        int ai;
+        int last =  -1;
+        for( int i=0; i<n; i++){
+            cin >> ai;
+            last = max( last, ai);
+            // if( check.count(ai) ) continue;
+            // check[ai] = true; 
+            if( ai < MAXN && !check[ai])
+                check[ai] = true;
+        }
+
+        // buscar el prime movimiento libre
+        int first_mov = 1;
+
+        while( check[first_mov] && first_mov <= last ) first_mov ++;
+        first_mov--;
+
+
+        // si toods los moviemtios son forzos, ie 1 2 3 4  5
+        // nos fijamos en la paridad del ultimo movimeinto
+        if( first_mov == last){
+            cout <<  ( (first_mov%2)? "Alice": "Bob" ) << "\n";
+            continue;
+        }
+
+        // si no ver la pridad del primer movimiento no forzoso
+        first_mov++;
+        cout <<  ( (first_mov%2)? "Alice": "Bob" ) << "\n";
+
+    }
 
     
 }
