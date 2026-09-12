@@ -1,13 +1,18 @@
 /*  
-    * Contest: 
-    * URL: 
-    * Problem: 
+    * Contest: Codeforces Round 481 (Div. 3)
+    * URL: https://codeforces.com/contest/978
+    * Problem: E. Bus Video System
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic: combinatorics | intersection of intervals | math
+    * Rating:  1400
+    * Algorithm: check  $0 <=  x + \sum_{k=1}^{i} a_k <= $ 
+                for all $i=0,...,n$, using interval intersections
+                check
+                $ x \in [ - \sum_{k=1}^{i} a_k, w - \sum_{k=1}^{i} a_k]$
+                for all i 
+    * Complexity: O(N)
 
-    * Status: 
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>

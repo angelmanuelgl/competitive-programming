@@ -1,15 +1,19 @@
-    /*  
-        * Contest: 
-        * URL: 
-        * Problem: 
-     
-        * Topic: 
-        * Algorithm: 
-        * Complexity: 
-     
-        * Status: 
-        * angelmanuelgl
-    */
+/*  
+    * Contest: Codeforces Round 481 (Div. 3)
+    * URL: https://codeforces.com/contest/978
+    * Problem: D. Almost Arithmetic Progression
+
+    * Topic: brute force | implementation | arithmetic progression | math
+    * Rating: 1500 
+    * Algorithm: - try all possible values for the arithmetic progessions's common difference
+                   (the interval [b2-b1-2, b2-b1+2]) 
+                 - try all posibles values for the staring term
+                   (b1-1,b1,b1+1)
+    * Complexity: O(N)
+
+    * Status: ACCEPTED
+    * angelmanuelgl
+*/
     #include<bits/stdc++.h>
     using namespace std;
      
@@ -100,17 +104,7 @@
      
      
         int dif = a[1] - a[0];
-        // las posibles dif son
-        // dif+2 = (b1+1) - (b2-1);
-     
-        // dif+1 = (b1) - (b2-1);
-     
-        // dif = (b1) - (b2);
-     
-        // dif-1 = (b1) - (b2+1);
-     
-        // dif-2 = (b1-1) - (b2+1);
-     
+        // las posibles dif son de dif -2 a dif +2     
         DEBUG{
             cout <<  " " << dif -2 << " " << dif +2 << "\n";
             cout <<   " " << a[0]-1 << " " << a[0]+1 << "\n";

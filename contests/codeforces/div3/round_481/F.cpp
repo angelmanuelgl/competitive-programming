@@ -1,13 +1,20 @@
 /*  
-    * Contest: 
-    * URL: 
-    * Problem: 
+    * Contest: Codeforces Round 481 (Div. 3)
+    * URL: https://codeforces.com/contest/978
+    * Problem: F. Mentors
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
-
-    * Status: 
+    * Topic: binary search | data structures | implementation
+    * Rating:  1500
+    * Algorithm: Sort the pairs $(r_i, i)$ based on the value of $r_i$ 
+                 to determine, in $O(N)$ time, how many smaller values ​​exist 
+                 for each element. 
+                 To eliminate conflicts for programmer $i$,
+                 we count how many programmers $x$ satisfy the condition 
+                 $r_i > r_x$ (that is, those for whom programmer $i$ could serve as a mentor).
+    * Complexity: O( N log N  + K log N)
+                - N programmers
+                - K programmers in a quarrel.
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>

@@ -1,13 +1,29 @@
 /*  
-    * Contest: 
-    * URL: 
-    * Problem: 
+    * Contest: Codeforces Round 481 (Div. 3)
+    * URL: https://codeforces.com/contest/978
+    * Problem: G. Petya's Exams
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic: greedy | implementation | sortings
+    * Rating:  1700
+    * Algorithm: Each day, we study for the nearest upcoming exam
+                 We iterate through the days from 1 to n, for each day
+                  - if an exam question has been released: 
+                     we add the days required to study to a priority queue
+                     using weight : - (day the of exam )
+                  - note that, in the priority queue the next element will be
+                    the nearest upcoming examn. And the maximun size is N*M
+                    because ci <= N and i<=M
+                  - we study for the nearest upcoming exam
 
-    * Status: 
+                 After all days, we verify if the priority queue is empty
+                 and check that for each exam study day, we check is the exam
+                 takes place on a later day
+    * Complexity: N days
+                  M Exams
+                  O( M *N log( N*M )  ) time
+                  O( NM ) memory
+    * ToDo: try on O( N log M ) and O(N+M) memory
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>

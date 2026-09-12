@@ -1,13 +1,14 @@
 /*  
-    * Contest: 
-    * URL: 
-    * Problem: 
+    * Contest: Codeforces Round 481 (Div. 3)
+    * URL: https://codeforces.com/contest/978
+    * Problem: A. Remove Duplicates
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic: Implementation
+    * Rating: 800 
+    * Algorithm: Implementation
+    * Complexity: O(N)
 
-    * Status: 
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>

@@ -1,13 +1,14 @@
 /*  
-    * Contest: 
-    * URL: 
-    * Problem: 
+    * Contest: Codeforces Round 481 (Div. 3)
+    * URL: https://codeforces.com/contest/978
+    * Problem: B. File Name
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic: Greedy Strings
+    * Rating: 800 
+    * Algorithm: count consecutive 'x' ocurrences when there are more than 2 
+    * Complexity: O(N)
 
-    * Status: 
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>

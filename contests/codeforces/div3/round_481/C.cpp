@@ -1,13 +1,14 @@
 /*  
-    * Contest: 
-    * URL: 
-    * Problem: 
+    * Contest: Codeforces Round 481 (Div. 3)
+    * URL: https://codeforces.com/contest/978
+    * Problem: C. Letters
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic:  binary search | implementation 
+    * Rating: 1000 
+    * Algorithm: BS on the  array of accumulated using a set and upper_bound
+    * Complexity: O(M log N)
 
-    * Status: 
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
