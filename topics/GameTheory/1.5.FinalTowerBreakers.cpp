@@ -1,13 +1,16 @@
 /*  
     * Contest: Game theory training sessions | CS
-    * URL: 
-    * Problem:  
+    * URL: https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/final-tower-breakers/problem
+    * Problem: Day 5: Tower Breakers - The Final Battle
 
-    * Topic: Game Teory
+    * Topic: Game Theory
     * Algorithm: 
-    * Complexity: 
+    * Complexity: - precomputation: O( C^(3/2) ) 
+                  - query: O( C ), improvable O( log(C) ) with binary search
+                  - in this case C = 130 is very small, for N <= 10^(18)
+                  - where  C is O( log N ) (conjecture)
 
-    * Status: IN PROCESS
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
@@ -152,6 +155,9 @@ vll dp_maxh(MAXTORRES, 0);
 ll hmax( int c){
     if(  dp_maxh[c] != 0 ) return dp_maxh[c];
 
+    // casos base
+    if( c <= 3) return dp_maxh[c] = 1;
+
     ll pos_ans = 0;
     for( int k = 1; k*k <= c; k++){
         pos_ans += hmax( c - k*k );
@@ -190,29 +196,23 @@ int main(){
         cout << "\n\n";
     }
 
+    // segunda aproximacion
 
+    // encontrar hasta donde debemos ejecutar c para que hmax(c) >= n con N <= 10^18
     DEBUG{
-
-        dp_maxh[0] = dp_maxh[1] = dp_maxh[2] = dp_maxh[3] = 1;
-        hmax(15);
-        // cout << dp_maxh << "\n";
-        for( int i=1; i<=15; i++ )
-            cout << i << " : " <<  dp_maxh[i] << "\n";
-
-        ll tmp = 1e12;
-        cout << "  : " << tmp << "\n";
         for( int i = 0; i<130; i++ ){
-            tmp = hmax(i);
+            int tmp = hmax(i);
             cout << i << " : " <<  tmp <<  " " << maxpow10(tmp) << "\n";
         }
     }
 
-
-    int t; cin >> t;
-
-    dp_maxh[0] = dp_maxh[1] = dp_maxh[2] = dp_maxh[3] = 1;
+    // precomputar hmax(c) para c <= 130
+    // O ( C^(3/2) )  donde C = 130 
     int maxC = 130;
-    hmax(maxC);
+    for( int i=1; i<=maxC; i++) hmax(i);
+
+    // casos de prueba
+    int t; cin >> t;
 
     while(t--){
         ll n; cin >> n;
@@ -220,7 +220,7 @@ int main(){
         // queremos encontrar el menor c tal que hmax(c) >= n
 
         int c = 1 ;
-        while( hmax(c) < n ) c++;
+        while( dp_maxh[c] < n ) c++;
   
         cout << c << "\n";
     }
