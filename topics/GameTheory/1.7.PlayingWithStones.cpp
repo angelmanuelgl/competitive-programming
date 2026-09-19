@@ -3,11 +3,12 @@
     * URL: https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=4228
     * Problem: UVA1482: Playing with Stones
 
-    * Topic: Game Theory | Grundy's Numbers
+    * Topic: Game Theory | Grundy Numbers
     * Algorithm: - Calculate each Grundy numbers in O(log a_i)
-                    by observing the pattern formed between two powers of two.
+                    by observing the pattern formed between two powers of two
                  - Calculate the XOR of all elements in O(N)
-                 - if it's zerp, i dont have winni move
+                 - if it's zero, i have winning move
+                 - if it's non-zero, i do not have winning move
     * Complexity: O( N log A)  for each test case 
                 - N piles <= 100
                 - 0 <= a <= A = 10^18
