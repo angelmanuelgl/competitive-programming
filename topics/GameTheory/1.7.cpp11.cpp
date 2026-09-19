@@ -11,7 +11,7 @@
     * Complexity: O( N log A)  for each test case 
                 - N piles <= 100
                 - 0 <= a <= A = 10^18
-    * Status: ACCEPT
+    * Status: ACCEPT (1:30hrs)
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
