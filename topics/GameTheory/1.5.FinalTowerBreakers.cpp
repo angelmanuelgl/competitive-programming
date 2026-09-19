@@ -4,7 +4,7 @@
     * Problem: Day 5: Tower Breakers - The Final Battle
 
     * Topic: Game Theory
-    * Algorithm: 
+    * Algorithm: for each coin, calculate the maximum possible height
     * Complexity: - precomputation: O( C^(3/2) ) 
                   - query: O( C ), improvable O( log(C) ) with binary search
                   - in this case C = 130 is very small, for N <= 10^(18)

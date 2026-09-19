@@ -109,7 +109,7 @@ Para ello hay que
 - [X] [Stair Game](https://cses.fi/problemset/task/1099)  (Difficulty: 4/5)
 - [X] [Day 5: Final Tower Breakers](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/final-tower-breakers)  (Difficulty: 3/5) 
 - [X] [Day 4: Powers Game](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/powers-of-two-game/problem)  (Difficulty: 1.5/5)
-- [ ] [UVA1482: Playing with Stones](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=4228)
+- [X] [UVA1482: Playing with Stones](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=4228) (Difficulty: 2.5/5) 
 - [ ] [Marbles](https://codeforces.com/gym/101908/problem/B)
 - [ ] [Matgame](https://www.spoj.com/problems/MATGAME/)
 
