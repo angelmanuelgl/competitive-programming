@@ -67,6 +67,11 @@ En la representacion de grafo descrita anteriormente en (2) hacemos lo siguiente
 * Vertices sin aristas (Estados finales): Etiquetar con 0
 * Para los demas vertices etiquetamos con el MEX de las etiquetas de sus nodos adyacentes
 
+Importate, si el juego no te dice explicitamente quienes son los estados perdedores (por ejemplo le juego se trata de mover una ficha a una posicion ganadora) hay que encontrar los estados que nos obligan a mover la ficha a una posicion en que el jugadorn en turno puede realizar movimientos ganadores desde ahi, esos seran los estados finales.
+Notar que es diferente 'mover una ficha a una posicion ganadora (posicion en la que no puede hacer mas movimientos esa ficha)' a decir 'gana el ultimo que no pueda realizar movimientos'.
+
+En general si sabemos exactamente en que nodos ganamos al un movimeinto ganador, encontramos los nodos que nos obligen a ir a esos nodos ganadores, esos seran nuestros estados finales, e ignoramos los nodos ganadores mencionados previamente
+
 Notar que
 * Estasos perdedores == 0 
 * Estados gandores != 0
@@ -103,15 +108,15 @@ Para ello hay que
 
 ### 7.1 Obligatorios
 
-- [X] [MEX Game 1](https://codeforces.com/contest/1943/problem/A)
-- [X] [Kaosar and Game](https://eolymp.com/en/problems/12261)
-- [X] [Everything Nim](https://codeforces.com/contest/1965/problem/A)
-- [X] [Stair Game](https://cses.fi/problemset/task/1099)
-- [ ] [Day 5: Final Tower Breakers](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/final-tower-breakers)
-- [ ] [Day 4: Powers Game](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/powers-of-two-game/problem)
-- [ ] [UVA1482: Playing with Stones](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=4228)
-- [ ] [Marbles](https://codeforces.com/gym/101908/problem/B)
-- [ ] [Matgame](https://www.spoj.com/problems/MATGAME/)
+- [X] [MEX Game 1](https://codeforces.com/contest/1943/problem/A) (Difficulty: 2/5)
+- [X] [Kaosar and Game](https://eolymp.com/en/problems/12261)  (Difficulty: 2/5)
+- [X] [Everything Nim](https://codeforces.com/contest/1965/problem/A)  (Difficulty: 1/5)
+- [X] [Stair Game](https://cses.fi/problemset/task/1099)  (Difficulty: 4/5)
+- [X] [Day 5: Final Tower Breakers](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/final-tower-breakers)  (Difficulty: 3/5) 
+- [X] [Day 4: Powers Game](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/powers-of-two-game/problem)  (Difficulty: 1.5/5)
+- [X] [UVA1482: Playing with Stones](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=4228) (Difficulty: 2.5/5) 
+- [X] [Marbles](https://codeforces.com/gym/101908/problem/B) (Difficulty: 3/5)
+- [X] [Matgame](https://www.spoj.com/problems/MATGAME/) (Difficulty: 3/5) 
 
 ### 7.2 Otros sugeridos (Parte 1)
 
