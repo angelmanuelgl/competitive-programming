@@ -14,20 +14,28 @@
 
 
 ### Problema A: A simple problem
-* **Estatus:** Pendiente
-* **Resuelto por:** 
-* **Tema:** 
-<!-- * **Hint:**
+* **Estatus:** ACCEPTED upsolveado
+* **Resuelto por:** Rogelio
+* **Tema:**  KMP | strings | dp 
+* **Hint:**
   <details>
   <summary>Haz clic para ver la pista</summary>
-  -
+  - Pensar en que prefijos se pueden generar con otros prefijos
   </details>
 
 * **Idea de solución:**
   <details>
   <summary>Haz clic para ver la idea de solución</summary>
-  -
-  </details> -->
+    - dp[ l ] = cantidad de palabras de esas longitud
+
+    - encontrar la "BASE de prefijos" con KMP // O(N)
+
+    - para las transcione usar esa base de prefijos
+
+    - $dp[ l ] =  \sum_{prefjo \in base} ( dp[ l - longitud_de_prefijo ] )$
+
+    - hay K estados y N transcione
+  </details>
 
 ---
 

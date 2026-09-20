@@ -3,11 +3,15 @@
     * URL: https://codeforces.com/gym/106540/problem/A
     * Problem: A. A simple problem
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic: KMP | strings | dp 
+    * Algorithm: dp[ l ] = cantidad de palabras de esas longitud
+                 - encontrar la "BASE de prefijos" con KMP // O(N)
+                 - para las transcione usar esa base de prefijos
+                 - dp[ l ] += dp[ l -longitud de prefijo ] para todo pregijo en la base
+                 - hay K estados y N transciones
+    * Complexity: O( KN  )
 
-    * Status: in progress
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
@@ -68,6 +72,21 @@ void logger(string vars, Args&&... values){
 const ll MOD =  998244353;
 
 
+
+// p[i] = longitud del prefijo mas largo que tambine es sufijo de s[i]
+const int MAXN = 2000;
+// O( |s| )
+vi kmp( const string &s){
+    int n = sz(s);
+    vi pi(n);
+    for( int i=1; i<n; i++){
+        int j = pi[i-1];
+        while( j && s[i] != s[j] ) j = pi[j-1];
+        pi[i] = j + (s[i]== s[j]);
+    }
+    return pi;
+}
+
 // // // // // // // // // // // // // // // // // // // // // // //
 // // // // // // // // // // // // // // // // // // // // // // //
 const int LETRAS = 'z' - 'a' + 1;
@@ -88,51 +107,46 @@ int main(){
         int n,k; cin >> n >> k;
         string s; cin >> s;
 
-        // --- dp[ l ][ c ]
-        // antidad de palabras valdiads
-        // de longitud l terminan en la
-        // posicion i de s
 
-        vvll dp( 2, vll( n,0ll) );
+        // -- encontrar conjunto BASE de prefijos ---
+        vi pi = kmp(s);
+        vector<bool> prefijoBase(n,0);
+        for( int i=0; i<n; i++){
+            if( !pi[i]) prefijoBase[i] = true; 
+        }
+
+
+
+        // --- dp[ l ]
+        // antidad de palabras valdias
+        // de longitud l 
+        vll dp( k+1 );
         
         // --- caso base ---
-        // para longitud 1
-        // solo podemos iniciar con la primera letra
-        // el resto es 0
-        dp[ 1 ][ 0 ] = 1;
+        // para longitud nula
+        dp[ 0 ] = 1;
+
 
         print(s);
-
-        DEBUG cout << 1  << "  : \t"  << dp[ 1%2 ] << "\n";
+        print( prefijoBase  );
 
         // --- transiciones ---
-        for( int l=2; l<=k ; l++ ){
-            // limpiar
-            fill( dp[l % 2].begin(), dp[l % 2].end(), 0ll );
 
-            // si terminas en la primra psocion antes de ti pido ahber cualquier otra cosa
-            for( int j = 0; j<n; j++ ){
-                if( ( j<n-1 && s[j+1] == s[0] )   ) continue;
-                dp[ l % 2 ][ 0 ] += dp[ (l-1)%2 ][ j ]; 
-                if( dp[ l%2 ][ 0 ] >= MOD ) dp[ l%2 ][ 0 ] %=MOD;
-            }
-            
-            // si terminas en otra posciion, la que esta anrtes de ti esta forzado
-            for( int i=1; i< n; i++ ){
-                // si da la casualdiad que si = s0 entonces ya lo contamos
-                // if( s[i] == s[0] ) continue;
-                dp[ l%2 ][i] = dp[ (l-1)%2 ][i-1];
-            }
+        // para cada longitud
+        for( int l=1; l<=k ; l++ ){
+            dp[ l ] = 0;
+            for( int i=0; i< min(l,n) ; i++ ){
+                if( !prefijoBase[i] ) continue;
+                
+                int longitudPrefijo = i+1;
+                dp[ l ] += dp[ l - longitudPrefijo ];
 
-            DEBUG cout << l  << "  : \t" << dp[ l%2 ] << "\n";
+                if( dp[l] >= MOD) dp[l] %= MOD;
+            }
         }
 
-        ll ans = 0;
-        for( int i=0; i< n; i++ ){
-            ans += dp[ k%2 ][ i ];
-            if( ans >= MOD) ans %= MOD;
-        }
 
+        ll ans = dp[ k ];
         cout << ans << "\n";
 
 
