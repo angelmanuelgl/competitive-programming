@@ -116,7 +116,7 @@ Para ello hay que
 - [X] [Day 4: Powers Game](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/powers-of-two-game/problem)  (Difficulty: 1.5/5)
 - [X] [UVA1482: Playing with Stones](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=4228) (Difficulty: 2.5/5) 
 - [X] [Marbles](https://codeforces.com/gym/101908/problem/B) (Difficulty: 3/5)
-- [ ] [Matgame](https://www.spoj.com/problems/MATGAME/)
+- [X] [Matgame](https://www.spoj.com/problems/MATGAME/) (Difficulty: 3/5) 
 
 ### 7.2 Otros sugeridos (Parte 1)
 
