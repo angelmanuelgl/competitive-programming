@@ -1,88 +1,93 @@
-# GameTheory 
-
+# GameTheory  | Numero de Grundy
 **Dr Carlos Segura**
-**Jueves 03 SeptimebreV**
+**Jueves 03 Septimebre**
+
+--- 
+## 1. Restriccionenes
 
 
-
-## 1 Restriccionenes
-
-
-Juegos combinatoriales:
-* 2 Jugadores alternando turnos
-* Informacion completa
-* Sin azar
-* Finito
-* Siempre hay ganadr
+**Juegos combinatoriales:**
+* 2 jugadores alternando turnos.
+* Información completa.
+* Sin elementos de azar.
+* Finito.
+* Siempre hay un ganador (sin empates).
 
 
-Segun el tipo de movimientos
-* Imparciales: Ambos juadores tienen los mismos tipos de movientos
-* Partisaos: Desde un mismo estado el jugador A puede realizar un conjunto de mov diferentes al conjunto de mov del jugador B desde es emismo estado
+**Según el tipo de movimientos:**
+* **Imparciales:** Ambos jugadores tienen exactamente el mismo conjunto de movimientos legales desde cualquier estado.
+* **Partidarios (Partisan):** Desde un mismo estado, el Jugador A puede realizar un conjunto de movimientos distinto al del Jugador B.
 
+**Juegos Imparciales:**
+* **Convención Normal:** El jugador que realiza el último movimiento gana.
+* **Convención Misère:** El jugador que realiza el último movimiento pierde.
 
-Juegos Imparciales:
-* Tipicamente: EL jugador que realiza el ultimo movimeinto gana
-* TIpo Misere: el ultimo que mueve pierne.
-
-*apartir de ahora nos centraremos en juegos Imparciales donde el ultimo jugador en mover gana*
+> *A partir de este punto, nos centraremos exclusivamente en juegos imparciales bajo convención normal (el último en mover gana).*
 
 
 ## 2. Representacion de grafo
 
-Construccion
-* Los Nodos son estados y las aristas movimientos
-* Los nodos sin aristas son nodos perdedores
+**Construcción:**
+* Los **nodos** representan estados del juego y las **aristas** representan movimientos válidos.
+* Los nodos sin aristas salientes (sin movimientos posibles) son **nodos perdedores**.
 
-Si desde un nodo...
-* sale una arista a un perdedor, entonces es un nodo ganador.
-* todas sus aristas van a nodos ganadores entonces es un nodo perdedor.
 
-Como propagar:
-* Usar orden topologico inverso
+**Propagación de Estados:**
+Desde un nodo dado:
+* Si **sale al menos una arista** a un nodo perdedor, es un **nodo ganador**.
+* Si **todas sus aristas** van a nodos ganadores, es un **nodo perdedor**.
+
+
+Sobre laimplementacion:
+* Propagar estados utilizando un orden topológico inverso.
 
 
 
 ## 3. Ideas mas UTILES
 
 Buscar una **propiedad** tal que
-* Desde estados con esa propiedad todos los estados a los que puedes llegar no la tiene
-* Desde estados que no tienen esa propiedad siempre se puede ir a un estado que si la tiene
-* El estado(s) final (perdedor) tiene esa propiedad
+1. Desde un estado con la propiedad, **todos** los movimientos llevan a estados que **no** la tienen.
+2. Desde un estado sin la propiedad, **existe al menos un** movimiento que lleva a un estado que **sí** la tiene.
+3. El estado (o estados) terminal perdedor **posee** la propiedad.
 
-Otra **idea muy util**:
-* Representar numeros en binario
-
+Otra idea muy util: **Representación en Binario:**
+* Analizar la paridad de los bits en las cantidades de elementos (Base del juego de NIM)
 
 ## 4. Multiplesjuegos independientes
 
-Si tenemos el caso en que tenemos varios juegos combinatoriales y en cada turno:
-* eliges un juego
-* en ese juego eliges un movimiento
+Cuando el estado global se compone de $N$ juegos combinatoriales independientes, y en cada turno el jugador:
+1. Elige uno de los sub-juegos.
+2. Realiza un movimiento válido en ese sub-juego.
+
 
 
 ## 4.1 Numeros de Grundy
 
-En la representacion de grafo descrita anteriormente en (2) hacemos lo siguiente
-* Vertices sin aristas (Estados finales): Etiquetar con 0
-* Para los demas vertices etiquetamos con el MEX de las etiquetas de sus nodos adyacentes
+En la representacion de grafo descrita anteriormente (3) hacemos lo siguiente
+* **Nodos terminales (sin salidas):** Se etiquetan con $0$.
+* **Demás nodos:** Se etiquetan con el $\text{MEX}$ (Minimum Excludant) de las etiquetas de sus nodos adyacentes salientes:
+  $$\text{MEX}(S) = \min \{ x \in \mathbb{N}_0 \mid x \notin S \}$$
 
-Importate, si el juego no te dice explicitamente quienes son los estados perdedores (por ejemplo le juego se trata de mover una ficha a una posicion ganadora) hay que encontrar los estados que nos obligan a mover la ficha a una posicion en que el jugadorn en turno puede realizar movimientos ganadores desde ahi, esos seran los estados finales.
-Notar que es diferente 'mover una ficha a una posicion ganadora (posicion en la que no puede hacer mas movimientos esa ficha)' a decir 'gana el ultimo que no pueda realizar movimientos'.
+> **Importante:** Si el problema no define explícitamente los estados perdedores en términos de 'no tener movimientos' (por ejemplo, el objetivo es mover una ficha a una casilla determinada), debemos transformar el juego identificando los nodos que **obligan** a dejar al oponente en una posición ganadora. Dichos nodos actuarán como nuestros estados terminales ($G = 0$).
+> Notar que es diferente 'mover una ficha a una posicion ganadora (posicion en la que no puede hacer mas movimientos esa ficha)' a decir 'gana el ultimo que no pueda realizar movimientos'.
+> En general si sabemos exactamente en que nodos ganamos al un movimeinto ganador, encontramos los nodos que nos obligen a ir a esos nodos ganadores, esos seran nuestros estados finales, e ignoramos los nodos ganadores mencionados previamente
 
-En general si sabemos exactamente en que nodos ganamos al un movimeinto ganador, encontramos los nodos que nos obligen a ir a esos nodos ganadores, esos seran nuestros estados finales, e ignoramos los nodos ganadores mencionados previamente
+**Propiedades:**
+* **Estado Perdedor ($P$):** $\text{Grundy} = 0$
+* **Estado Ganador ($N$):** $\text{Grundy} \neq 0$
 
-Notar que
-* Estasos perdedores == 0 
-* Estados gandores != 0
+**Teorema de Sprague-Grundy:**
+Para evaluar la posición global de $N$ juegos independientes, se calcula el $\text{XOR}$ ($\oplus$) de los números de Grundy de cada sub-juego:
+$$G_{\text{total}} = G(s_1) \oplus G(s_2) \oplus \dots \oplus G(s_k)$$
 
-Para saber si se ganao o no en un estado general compuesto por un nodo de cada juego independiente lo que hacemos es tomar el XOR de los numeros de grundy de cada estado de los jeugos individuales.
+Para la Demostración conviene pensar primero en el Juego de NIM: 
+* En el juego de NIM tenemos $M$ pilas de objetos con varios objetos cada una, podemos quitar la cantidad que queramos de cada pila.
+* Lo podemos modelar como $N$ juegos independientes, fijarse en como se ven los grafos (2).
+* La suma $\text{XOR}$ de las alturas de las pilas, donde las alturas satisfacen la propiedad invariante de la Sección anterior (3).
 
-Para la dmeostracion conviene pensar primero en el Juego de NIM
 
-*Tenemos M pilas con varios objetos cada una, podemos quitar la cantidad que queramos de cada pila*
 
-esto lo podemos modelar como N juegos independientes, fijarse en como se ven los grafos (2), y en que el XOR del la longitud de la torre cumplen la propiedad en (3).
+
 
 
 ## 5. Juegos no combinatorial
@@ -92,21 +97,25 @@ Ejemplo:
 * [Day 4: Fun Games](https://www.hackerrank.com/contests 5-days-of-game-theory/challenges/fun-game)
 
 
-## 5.1 Ideas para este tipo de juegos
-Si el juego se trata de ir eligiendo entre un conjunto de objetos o de alguna forma podeos hacer que cada objeto elegido pertenezca a un grupo o en el que la estrategia optima es maximizar/minimazar
+## 5.1 Estrategias para Juegos de Maximización / Minimización
 
-* La estrategia optima suele ser ordenar los objetos bajo cierto orden y elegirlos en ese orden
+Si el juego consiste en elegir elementos alternadamente entre un conjunto de objetos o de alguna forma podemos hacer que cada objeto elegido pertenezca a un grupo
+
+* La estrategia óptima suele requerir **ordenar los objetos** bajo un criterio específico y seleccionarlos de forma *greedy*.
+
 
 Para ello hay que
-* Formular el problema como un problema de maximacion/minimizacion
-* osea hay un jugador que quiere maximizar cierta funcion mientras el otro quiere minimizarla
-* Ver que pasa cuando tenemos solo 2 objetos (los dos objetos del final)
-* Hay que hacer ambos casos, si le toca mover al jugador A o al jugador B
-* Generalizar la demostracion para ams de dos objetos
+1. Formular la dinámica como un problema de maximización/minimización 
+2. Osea el Jugador A busca maximizar la función $F$, Jugador B busca minimizarla
+3. Analizar el caso base con solo 2 objetos al final del juego (los dos objetos del final)
+4. Como son los objetos del final hay que evaluar ambos escenarios: cuándo es el turno del Jugador A y cuándo es del Jugador B.
+5. Deducir la condicion de intercambio, es decir cuando nos cionviene elegir tal cosa.
+6. Generalizar la demostracion para $N$ objetos.
 
-## 7. Tarea
 
-### 7.1 Obligatorios
+## 6. Problemas de Práctica
+
+### 6.1 Obligatorios
 
 - [X] [MEX Game 1](https://codeforces.com/contest/1943/problem/A) (Difficulty: 2/5)
 - [X] [Kaosar and Game](https://eolymp.com/en/problems/12261)  (Difficulty: 2/5)
@@ -135,3 +144,16 @@ Para ello hay que
 - [ ] [Day 2: Tower Breakers, Revisited!](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/tower-breakers-2)
 - [ ] [Temporal Paradox](https://codeforces.com/group/Rilx5irOux/contest/622715/problem/D) _(Nota: requiere darse de alta en el [grupo de Codeforces](https://codeforces.com/group/Rilx5irOux))_
 
+
+
+
+
+# GameTheory  | Numero de Grundy
+**Dr Carlos Segura**
+**Jueves 03 Septimebre**
+
+----
+
+- [ ] Bob vs. ATM: https://www.codechef.com/AMR16MOS/problems/AMR16J
+- [ ] https://lightoj.com/problem/game-of-cs
+- [ ] Got root?: https://www.hackerrank.com/greenhackenbush
