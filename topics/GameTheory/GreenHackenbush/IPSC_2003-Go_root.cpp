@@ -82,258 +82,94 @@ struct dsu{
 struct edge{
     int from, to;
 };
-
-
 struct hackenbush_result{
-    // transformar el original al arbol compacto
-    int cntRepresentantes; // cantidades de nuevos nodos 
-    vi compactados;  // dado el vertice original nos el nodo compacto que le corresponde //  -1 si no llega al suelo.
-
-    // el arbol compacto es de tam cntRepresentantes (antes de nuevas hojas)
-    int root;      // el indice del piso en el arbol 
-    vvi tree;      // arbol equivalente
-
-    vi paridad;     // paridad de lazos en el arbol compactados 
-    vi nim;        // valor de cada subarbol, sin su arista hacia el padre 
-
-    // respuesta
-    int value; // pierdes si value = 0
+    int cntRepresentantes, root, value;
+    vi compactados, paridad, nim;
+    vvi tree;
 };
-
-// notas:
-// n incluye al nodo 0
-// vertices [0,n)
-// cada arista aparece UNA vez (son no dirigidas)
-// asi que peudes poner dobles aristas {1,2} {1,2} a edges
-// por si acaso: mas_suelo contiene puntos adicionales del suelo
-// 0 siempre pertenece al suelo).
-
-/// T:  O( (n+m)*alpha(n) )
-/// M:  memoria O(n+m)
 hackenbush_result green_hackenbush(int n, vector<edge> edges, const vi &mas_suelo = {}){
-    // --- --- SUELO --- ---
-    // identificar contactos con 0 ANTES del DFS.
-    // una arista real entre dos contactos se vuelve lazo y NO se elimina
-    // en normalizado esta el nuevo grafo
-    vi normalizado(n);
-    iota(all(normalizado), 0); // normalizado[i] = i
-    for(int u : mas_suelo){
-        normalizado[u] = 0;
-    }
-    // la lista de adyacencia para guardar aristas
-    // esta sobre el grafo normalizado
-    vvi adj(n); 
-    // sobreescribimos los edges para que tomen en cuenta estos nodos
+    vi norm(n);
+    iota(all(norm), 0);
+    for(int u : mas_suelo) norm[u] = 0;
+    vvi adj(n);
     for(int i = 0; i < sz(edges); i++){
         edge &e = edges[i];
-        e.from = normalizado[e.from];
-        e.to = normalizado[e.to];
-        // en la lista de adyacencia guardamos el indice de la arista
+        e.from = norm[e.from], e.to = norm[e.to];
         adj[e.from].pb(i);
         if(e.from != e.to) adj[e.to].pb(i);
     }
-    // esto solo es necesario en caso de que existan nodos suelo dados por el porblema 
-
-    // --- --- DFS TREE INTENTO INTERATIVO --- ---
-    // lo hacemos sobre el normalizado ya que la lista de adyacencia esta hecha sobre el
-
-    /// La pila contiene el camino activo del DFS
-    // para conservar la propiedad ancestro/back-edge
-    vi pendiente = {0};
-    dsu unidos_para_compactar(n);
-    /// usados para el postorden e ir uniendo
-    vi depth(n, -1); // profundidad (de arriba a bajo)
-    vi low(n); // nos dice la back-edge mas alta
-    depth[0] = low[0] = 0; 
-    /// representacion del dfs tree
-    vi parent(n, -1), parent_edge(n, -1); 
-    /// utilidades para hacerlo recursivo
-    vi next(n,0);  // guarda el siguiente vecino por explorar de este nodo
-    
-
+    vi pendiente = {0}, depth(n, -1), low(n), parent(n, -1), parent_edge(n, -1), next(n,0);
+    dsu unionf(n);
+    depth[0] = low[0] = 0;
     while( sz(pendiente) ){
-        // el nodo a procesar
         int u = pendiente.back();
-
-        // si aun tenemos por explorar
         if(next[u] < sz(adj[u])){
-            // tomamos el next[u]-esimo vecino de la lista de adyacencia de u
-            // notar que en la lista de adyacencia tenemos edges
-            // para la sigueinte queremos ver el next[u]+1
             int id = adj[u][next[u]++];
-
-            // omitir padre solo si es de esta arista
-            // no es lo mismo que si vecino == padre 
-            // por el caso a -> b -> c con a == b
             if(id == parent_edge[u]) continue;
-            
-            // cuidado con las aristas, son no dirigidas
-            // vamos de u -> v
             const edge &e = edges[id];
             int v = (e.from == u ? e.to : e.from);
-            if(v == u) continue; // si es lazo
-
-            // los lazos los vamos a contar despues 
-
-            // si no hemos pasado por esto 
+            if(v == u) continue;
             if(depth[v] == -1){
                 parent[v] = u;
                 parent_edge[v] = id;
                 depth[v] = low[v] = depth[u] + 1;
-
-                // entramos 'recursivamente' a sus hijo
                 pendiente.pb(v);
             }
-            // back endge
-            // u -> v 
-            // u debeira estar arriba (menor profunidad) que v (mayor profundiad)
-            else if(depth[v] < depth[u]){
+            else if(depth[v] < depth[u])
                 low[u] = min(low[u], depth[v]);
-            }
-        }
-        
-
-        // ESTAMOS EN POSTORDEN
-        // low[u] ya deberia tener valor correcto porque ya temrinaron sus hijos
-        // 
-        else{
-            // EJEMPLO: u esta en ciclo
-            // ... -> x -> y -> ... -> p -> u -> ... -> w
-            //       \_______<_______<_______<________/    // back edge
-            // low[w] = low[u] = ... = low[p] = ... = low[y] = low[x] = depth[x]
-            // depth[ z ] <= depth[p] = low[u]
-            
-            // EJEMPLO: u NO esta en ciclo 
-            //        /---<------<----\
-            // ... -> x -> ... -> w -> y -> ... -> p -> u -> ... -> z -> ...  -> w
-            //                                                      \___________/    // back edge
-            // low[w] = low[u] = ... = low[p] =  depth[z]
-            // low[y] = low[w] = ... = low[x] =  depth[x]
-            // depth[ z ] > depth[p] = low[u]
-
-            // mas ejemplos en papel
-
-            // la idea es que vamos fucionado con el padre si la arista (p,u) es un ciclo
-            // tambien podriamos fucionar el nodo que le corresponde low[u] = depth[x]
-
-
-            // la edge (p,u) es parte de un ciclo si sii low[u] > depth[p]
-            
-            // y fusionamos todo el camino de regreso
-            // en particular  u y su padre
+        }else{
             pendiente.pop_back();
             int p = parent[u];
-            if(p != -1){
-                low[p] = min(low[p], low[u]);
-                if(low[u] <= depth[p]) unidos_para_compactar.join(p, u, false);
-            }
+            if(p == -1) continue;
+            low[p] = min(low[p], low[u]);
+            if(low[u] <= depth[p]) unionf.join(p, u, false);
         }
     }
-
-    // --- --- COMPACTACION --- --- 
-    // construimos el arbol usanod lo obtenido en dsu
-    // el representante puede ser cualquiera
-
     hackenbush_result res;
-
-    // PARA CADA NODO ALCANZADO LO "PONEMOS" EN EL NODO COMPACTADO // normalizado -> compactado
-    
-    
-    // basicamente >> reindexamos los representantes <<
-    // vamos guardando a que 'nodo compacto' pertenece cada represenante
-    // {valores cualesquiera entre de [0,n) }.  ->  [0, cntRepresentantes]
-    // -1 si no podias llegar a piso
     vi id(n, -1);
-    // el siguiente id sera este contador
     res.cntRepresentantes = 0;
     for(int u = 0; u < n; u++){
-        // si es alcanzable desde el suelo
-        if(depth[u] != -1){
-            // tomar su representante
-            int r = unidos_para_compactar.root(u);
-            // si todavia no tiene id le ponemos uno
-            if(id[r] == -1) id[r] = res.cntRepresentantes++;
-        }
+        if(depth[u] == -1) continue;
+        int r = unionf.root(u);
+        if(id[r] == -1) id[r] = res.cntRepresentantes++;
     }
-    // >> a cada nodo le asignamos su compactado <<
-    // compactados[u] = a que nodo compacto pertenece el nodo original u
     res.compactados.assign(n, -1);
     for(int u = 0; u < n; u++){
-        int v = normalizado[u];
-        if(depth[v] != -1) res.compactados[u] = id[unidos_para_compactar.root(v)];
+        int v = norm[u];
+        if(depth[v] != -1) res.compactados[u] = id[unionf.root(v)];
     }
     res.root = res.compactados[0];
-
-    // ya estamos trabajando con el arbol compactado
-    // reservamos par
     res.tree.resize(res.cntRepresentantes);
     res.paridad.assign(res.cntRepresentantes, 0);
-
-    // --- --- PARIDAD LAZOS --- ---
-    // RECORDAR QUE: despues de todas las uniones cada arista interna se convierte en un lazo
-    
-    // contamos cuantos lazos tiene cada nodo
     for(const edge &e : edges){
         if(depth[e.from] == -1) continue;
-        int a = id[unidos_para_compactar.root(e.from)];
-        int b = id[unidos_para_compactar.root(e.to)];
-        if(a == b){
-            res.paridad[a] ^= 1;
-        } else {
+        int a = id[unionf.root(e.from)], b = id[unionf.root(e.to)];
+        if(a == b) res.paridad[a] ^= 1;
+        else{
             res.tree[a].pb(b);
             res.tree[b].pb(a);
         }
     }
-
-    // Cada lazo equivale a una hoja
-    // 1 XOR 1 = 0
-    // Materializamos exactamente una hoja si la paridad es impar
-    // si es par se eliminan toods los lazos
     for(int u = 0; u < res.cntRepresentantes; u++){
-        if(res.paridad[u]){
-            // un nuevo nodo
-            int leaf = sz(res.tree);
-            // lo agregamos a este porque tiene lazo paridad 1
-            res.tree.pb(vi{u});
-            res.tree[u].pb(leaf);
-        }
+        if(!res.paridad[u]) continue;
+        int leaf = sz(res.tree);
+        res.tree.pb(vi{u});
+        res.tree[u].pb(leaf);
     }
-    // --- --- NIM --- ---
-    // obtener un orden padre-antes-que-hijo y procesarlo al reves.
-    // g(u) = XOR sobre hijos v de (g(v)+1). El +1 es suma ORDINARIA,
-    // mientras que la combinacion de ramas es XOR. Como las hojas de lazos
-    // ya existen, NO volver a incluir paridad[u] en esta recurrencia.
-    // La raiz no tiene arista de soporte: NO sumar 1 al resultado global.
-    
-    
-    // hacemos una dfs // guardando el padre antes que el hijo
-    vi order = {res.root}; // el orden // como la pila anterior pero sin pop
-    vi par(sz(res.tree), -1); // padre del nodo compacto u
-    // raiz su propio padre
+    vi order = {res.root}, par(sz(res.tree), -1);
     par[res.root] = res.root;
-    // DFS iterativa guardando primero padre
     for(int i = 0; i < sz(order); i++){
-        // el nodo sigueinte en la DFS
         int u = order[i];
-        // para los hijos del nodo actual
-        for(int v : res.tree[u]){
+        for(int v : res.tree[u]){ 
             if(v == par[u]) continue;
-            // actualizamos su padre y agregamos
             par[v] = u;
             order.pb(v);
         }
     }
-    // guardamos el valor de la pila de nim equivalente desde el nodo actual 
-    // sin contar la arista hacia su padre
     res.nim.assign(sz(res.tree), 0);
     for(int i = sz(order) - 1; i > 0; i--){
         int u = order[i];
-        // actualizamos el valor del padre
-        int padre = par[u];
-        int valorSubarbol = res.nim[u];
-        int valorRama = valorSubarbol + 1;
-
-        res.nim[padre] ^= valorRama;
+        res.nim[par[u]] ^= (res.nim[u]+1);
     }
     res.value = res.nim[res.root];
     return res;
