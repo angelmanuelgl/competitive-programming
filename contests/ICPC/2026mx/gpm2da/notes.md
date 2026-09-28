@@ -40,19 +40,37 @@
 ---
 
 ### Problema B: Baus Stream
-* **Estatus:** Pendiente
-* **Resuelto por:** 
-* **Tema:** 
-<!-- * **Hint:**
+* **Estatus:** ACCEPTED upsolving
+* **Resuelto por:**  Angel
+ **Tema:** Trie | Tree DP | Knapsack
+
+* **Hint:**
   <details>
   <summary>Haz clic para ver la pista</summary>
-  -
+
+  Cada prefijo representa un subárbol del trie. Buscar ese prefijo elimina todos los usernames dentro de dicho subárbol.
+
   </details>
+
 * **Idea de solución:**
   <details>
   <summary>Haz clic para ver la idea de solución</summary>
-  -
-  </details> -->
+
+  - Construimos un trie y calculamos `cnt[u]`, la cantidad de usernames en el subárbol de `u`.
+
+  - Definimos `dp[u][i]` como el mínimo número de búsquedas para eliminar exactamente `i` usernames del subárbol de `u`.
+
+  - Combinamos cada hijo `v` como tree knapsack:
+    $$ndp[a+b]=\min(ndp[a+b],dp[u][a]+dp[v][b]).$$
+
+  - También podemos buscar directamente el prefijo `u`, eliminando `cnt[u]` usernames con una sola búsqueda:
+    $$dp[u][cnt[u]]=\min(dp[u][cnt[u]],1).$$
+
+  - La respuesta es `dp[root][k]`.
+
+  - **Complejidad:** $O(SK)$ tiempo y $O(SK)$ memoria, donde $S$ es la suma de las longitudes de los usernames.
+
+  </details>
 
 ---
 
@@ -181,21 +199,64 @@
 
 ---
 
+
 ### Problema J: Jorge likes "sum over all subarrays" problems
-* **Estatus:** Pendiente
-* **Resuelto por:** 
-* **Tema:** 
-<!-- * **Hint:**
+
+* **Estatus:** ACCEPT Upsolving
+* **Resuelto por:** Angel
+* **Tema:** Combinatoria | Polinomios | Divide y vencerás | NTT
+* **Hint:**
   <details>
   <summary>Haz clic para ver la pista</summary>
-  -
+
+  Fija un subconjunto de tamaño $k$. ¿En cuántas permutaciones sus elementos aparecen juntos como un bloque? Después, piensa qué representan los coeficientes de $\prod_{i=1}^{n}(1+ix)$.
+
   </details>
+
 * **Idea de solución:**
   <details>
   <summary>Haz clic para ver la idea de solución</summary>
-  -
-  </details> -->
 
+  - Un subconjunto de tamaño $k$ aparece como bloque en $k!(n-k+1)!$ permutaciones: $k!$ formas de ordenar sus elementos y $(n-k+1)!$ formas de acomodar el bloque con los elementos restantes.
+
+  - Construimos $P(x)=\prod_{i=1}^{n}(1+ix)$. El coeficiente $P[k]$ suma los productos de todos los subconjuntos de tamaño $k$.
+
+  - Para construirlo, usamos divide y vencerás: cada hoja representa un factor $(1+ix)$ y combinamos los productos de ambas mitades mediante convolución con NTT.
+
+  - Precalculamos factoriales y obtenemos la respuesta:
+    $$\sum_{k=1}^{n} P[k]\cdot k!\cdot(n-k+1)!\pmod{998244353}.$$
+
+  Sea $S_n$ el conjunto de todas las permutaciones de $\{1,\dots,n\}$. Definimos:
+
+    $$
+    \begin{aligned}
+    \mathrm{Ans}
+    &=\sum_{\text{permutación }\pi}
+      \sum_{\text{intervalo }[l,r]}
+      \prod_{j=l}^{r}\pi_j\\
+    &=\sum_{k=1}^{n}
+      \sum_{\substack{S\subseteq[n]\\|S|=k}}
+      \#(\text{apariciones de }S)\prod_{a\in S}a\\
+    &=\sum_{k=1}^{n}
+      \sum_{\substack{S\subseteq[n]\\|S|=k}}
+      \underbrace{k!(n-k+1)!}_{w_k}\prod_{a\in S}a\\
+    &=\sum_{k=1}^{n}w_k
+      \underbrace{\left(
+      \sum_{\substack{S\subseteq[n]\\|S|=k}}
+      \prod_{a\in S}a\right)}_{v_k}\\
+    &=\boxed{\sum_{k=1}^{n}w_kv_k}.
+    \end{aligned}
+    $$
+
+  - $w_k=k!(n-k+1)!$: ordenamos los $k$ elementos dentro de un bloque y luego acomodamos ese bloque con los $n-k$ elementos restantes.
+  - $v_k=[x^k]\prod_{i=1}^{n}(1+ix)$: elegir $k$ factores que aporten $ix$ equivale a elegir un subconjunto de tamaño $k$. Calculamos estos coeficientes con divide y vencerás y NTT. 
+
+
+
+
+  - **Complejidad:** $O(n\log^2 n)$ tiempo y $O(n)$ espacio por caso.
+
+  </details> 
 ---
 
 ### Problema K: K Vertices

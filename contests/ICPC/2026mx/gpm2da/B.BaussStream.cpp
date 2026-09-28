@@ -3,11 +3,16 @@
     * URL: https://codeforces.com/gym/106540/problem/A
     * Problem: B – Baus Stream
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
-
-    * Status: 
+    * Topic: Trie, Tree DP, Knapsack
+    * Algorithm: - dp[u][i] = min searches to delete i usernames from subtree u.
+                 - merge each child v: ndp[a+b] = min(ndp[a+b], dp[u][a] + dp[v][b])
+                   in O( min(K,A)* min (K, B) )
+                 - taking prefix u deletes cnt[u] usernames in one search.
+                 - ans: dp[root][k].
+                 - Tree-knapsack merges cost O(nK) in total (amortized) not O( S K^2 )
+                 - add nodes in trie O(SK)
+    * Complexity: O( SK) time, O( S*K ) memory     S = total input length
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
@@ -70,8 +75,10 @@ const int MOD = 1e9 + 7;
 
 
 const int SIGMA = 'z' - 'a' +1;
-const int MAXNODOS =   1e2 + 5;
-// const int MAXNODOS =   1e5 + 5;
+// const int MAXNODOS =   1e2 + 5;
+// const int MAXK = 1e2;
+const int MAXNODOS =   1e5 + 5;
+const int MAXK = 1e4 + 5;
 struct trie{
     // u --(c) --> nodos[u][c]
     int hijo[MAXNODOS][SIGMA] = {};
@@ -82,7 +89,7 @@ struct trie{
   
     void insert( string &s){
         int actual = root;
-        cout << s << "\n";
+        DEBUG cout << s << "\n";
         for( char cha : s){
             int c = cha - 'a';
             // si aun no esta agregado
@@ -96,13 +103,12 @@ struct trie{
         DEBUG cout <<  "\n" << s << "\n";
     }
 
-    int spac = 0;
     void imprimir( void ){
         vi pend = {1};
         vector<char> pendc = {'r'};
         for( int i=0 ; i<sz(pend); i++){
             int u = pend[i];
-            cout << u << ", " << pendc[i] << "  : ";
+            DEBUG cout << u << ", " << pendc[i] << "  : ";
 
             for( int c=0; c<SIGMA; c++ ){
                 if( !hijo[u][c] ) continue;
@@ -110,8 +116,78 @@ struct trie{
                 pend.pb(hijo[u][c]);
                 pendc.pb(c+'a');
             }
-            cout << "\n";
+            DEBUG cout << "\n";
         }
+    }
+
+    int cnt[MAXNODOS]; // conta rpalabras en subarbol
+    void dfs_cnt_terminales(int u = 1){
+        cnt[u] = (esfinal[u])? 1:0 ;
+        for( int c=0; c<SIGMA; c++ ){
+            int v = hijo[u][c];
+            if( !v ) continue;
+            dfs_cnt_terminales( v );
+            cnt[u] += cnt[v];
+        }
+        DEBUG cout << u <<  " "  << cnt[u] << "\n";
+    }
+
+    vi dp[MAXNODOS]; 
+    // dp[u][i] = nminimo numero de busquedas para elimianr exatamente i prefijos
+    
+    void dfs_dp(int u , int k){
+        dp[u] = {0};
+        // ---  eliminar prefijos juntado subarboles ---
+
+    
+        // procesamos cada nodo hijo
+        for( int c = 0; c<SIGMA; c++){
+            int v = hijo[u][c];
+            if( !v ) continue;
+            dfs_dp( v , k);
+
+            // queremos eliminar a lo mas k prefijos
+            // podemos eliminar a lo mas "cnt_palabras_subarbol" prefijos
+            vi nuevo_dpu( min(k,cnt[u])+1, INT_MAX);
+            
+
+            // O ( K ^2 ) 
+            // O( cnt^2 )
+            for( int a = 0; a < sz(dp[u]); a++){
+            for( int b = 0; b < sz(dp[v]); b++){
+                if( a+ b > k ) continue;
+                // si podemos eliminear a usarios
+                // si con el nodo v podemos eliminat b usuairos
+                // podemos eliminar a + b usuarios juntando las buisquedas
+                int posible =  dp[u][a] + dp[v][b];
+                // revisar que no hubo overflow
+                if( dp[u][a] == INT_MAX || dp[v][b] == INT_MAX)
+                    continue;
+                
+                // vamos tomando el mejor
+                nuevo_dpu[a + b]  = min(posible, nuevo_dpu[a + b]);
+            }}
+
+
+            // despues de cada hijo lo actualizamos
+            swap( dp[u], nuevo_dpu );
+
+        }
+
+  
+
+        // --- eliinar todo el subarbol del nodo actual con una busqueda ---
+        if( u != root && cnt[u] <= k){
+            // si no cabe
+            if( dp[u].size() <= cnt[u] )
+                dp[u].resize(cnt[u] + 1, INT_MAX);
+            // agregamos la opcion de eliminar todos cnt[u] con 1movimeinto
+            dp[u][cnt[u]] = min(dp[u][cnt[u]], 1);
+        }
+    }
+
+    int ans( int k ){
+        return dp[root][k];
     }
 };
 
@@ -138,7 +214,11 @@ int main(){
         mytrie.insert(s);
     }
 
-    mytrie.imprimir();
+    DEBUG mytrie.imprimir();
 
-    
+    mytrie.dfs_cnt_terminales();
+    mytrie.dfs_dp(1,k);
+
+
+    cout << mytrie.ans(k) << "\n";
 }
