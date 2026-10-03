@@ -2,7 +2,7 @@
 **Dr Carlos Segura**
 **Jueves 03 Septimebre**
 
---- 
+----
 ## 1. Restriccionenes
 
 
@@ -68,13 +68,15 @@ En la representacion de grafo descrita anteriormente (3) hacemos lo siguiente
 * **Demás nodos:** Se etiquetan con el $\text{MEX}$ (Minimum Excludant) de las etiquetas de sus nodos adyacentes salientes:
   $$\text{MEX}(S) = \min \{ x \in \mathbb{N}_0 \mid x \notin S \}$$
 
-> **Importante:** Si el problema no define explícitamente los estados perdedores en términos de 'no tener movimientos' (por ejemplo, el objetivo es mover una ficha a una casilla determinada), debemos transformar el juego identificando los nodos que **obligan** a dejar al oponente en una posición ganadora. Dichos nodos actuarán como nuestros estados terminales ($G = 0$).
-> Notar que es diferente 'mover una ficha a una posicion ganadora (posicion en la que no puede hacer mas movimientos esa ficha)' a decir 'gana el ultimo que no pueda realizar movimientos'.
+
+**Importante:** Si el problema no define explícitamente los estados perdedores en términos de 'no tener movimientos' (por ejemplo, el objetivo es mover una ficha a una casilla determinada), debemos transformar el juego identificando los nodos que **obligan** a dejar al oponente en una posición ganadora. Dichos nodos actuarán como nuestros estados terminales ($G = 0$).Notar que es diferente 'mover una ficha a una posicion ganadora (posicion en la que no puede hacer mas movimientos esa ficha)' a decir 'gana el ultimo que no pueda realizar movimientos'.
 > En general si sabemos exactamente en que nodos ganamos al un movimeinto ganador, encontramos los nodos que nos obligen a ir a esos nodos ganadores, esos seran nuestros estados finales, e ignoramos los nodos ganadores mencionados previamente
 
 **Propiedades:**
 * **Estado Perdedor ($P$):** $\text{Grundy} = 0$
 * **Estado Ganador ($N$):** $\text{Grundy} \neq 0$
+
+
 
 **Teorema de Sprague-Grundy:**
 Para evaluar la posición global de $N$ juegos independientes, se calcula el $\text{XOR}$ ($\oplus$) de los números de Grundy de cada sub-juego:
@@ -144,16 +146,87 @@ Para ello hay que
 - [ ] [Day 2: Tower Breakers, Revisited!](https://www.hackerrank.com/contests/5-days-of-game-theory/challenges/tower-breakers-2)
 - [ ] [Temporal Paradox](https://codeforces.com/group/Rilx5irOux/contest/622715/problem/D) _(Nota: requiere darse de alta en el [grupo de Codeforces](https://codeforces.com/group/Rilx5irOux))_
 
+- - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - -
 
-
-
-
-# GameTheory  | Numero de Grundy
+# GameTheory  | Green Hackenbush
 **Dr Carlos Segura**
-**Jueves 03 Septimebre**
+**Viernes 25 Septimebre**
 
-----
 
-- [ ] Bob vs. ATM: https://www.codechef.com/AMR16MOS/problems/AMR16J
-- [ ] https://lightoj.com/problem/game-of-cs
-- [ ] Got root?: https://www.hackerrank.com/greenhackenbush
+
+## 1. Definición
+
+Es un juego combinatorial **imparcial** sobre un grafo (o dibujo) conectado a una línea base llamada **suelo**
+
+Alice y Bob se turnan para realizar movimientos
+
+* En su turno, un jugador elige una arista (segmento) y la elimina 
+* Si al eliminar una arista quedan sub-grafos o aristas que ya no tienen ningún camino hacia el suelo, **desaparecen inmediatamente**
+
+
+Gana el jugador que realiza el **último movimiento**.
+
+
+
+## 2. Reducción y Teorema de Sprague-Grundy
+
+Dado que es un juego imparcial:
+* Si la figura global consta de múltiples componentes conexas independientes unidas al suelo, el **Número de Grundy** total se calcula realizando la suma Nim (**XOR bit a bit**) de los valores de Grundy de cada componente[cite: 1]:
+  $$G_{\text{total}} = G(C_1) \oplus G(C_2) \oplus \dots \oplus G(C_k)$$
+
+
+## 3. El Principio del Colón
+
+Para calcular el valor de Grundy de una componente con estructura de **árbol** enraizado en el suelo, se utiliza el **Colon Principle (Principio del Colón)**
+
+**Principio del Colón:**  
+* Tenemos dos arboles $H_1$ y $H_2$ tales que su numero de Grundy el mismo
+* Tenemos un grafo arbitrario $G$ que toca el suelo y $x$ un nodo de el.
+* Tomamos el grafo $G_1$ con $G - x - H_1$ 
+* $\implies$ Reemplazar $H_1$ por $H_2$ en el grafo $G$ no altera el valor de Grundy de la configuración total 
+
+Es decir, si tenemos otro grafo $G_2$ con $G - x - H_2$
+$$ G_1 \equiv G_2 $$
+Esto es *El grafo $G_1$ esta en posicion ganadora SI Y SOLO SI el grafo $G_2$ esta en posicion ganadora*
+
+
+**Formulacion Util:**
+Cuando dos o más ramas se unen en un mismo vértice $x$, se pueden reemplazar dichas ramas por una **única rama simple (tallo de bambú)** cuya longitud sea igual a la **suma Nim (XOR)** de las longitudes o valores de Grundy de las ramas originales.
+
+
+
+## 4. El Principio de Fusión 
+
+Cuando el  grafo contienen ciclos o bucles, se aplica el teorema **Fusion Principle (Principio de Fusión)**
+
+**Principio de Fusión:**  
+Todos los vértices que pertenezcan a un mismo **ciclo o circuito** pueden **fusionarse en un solo vértice** sin cambiar el valor de Sprague-Grundy del grafo
+
+### Consideraciones durante la reduccion de grafo general a Arbol:
+1. **El Suelo como Vértice:** Todos los puntos o vértices conectados directamente al suelo se consideran y pueden tratarse como un **único vértice equivalente**
+2. **Reducción de Grafos a Árboles:** Aplicando el principio de fusión en todos los ciclos, cualquier grafo general se reduce a un **árbol equivalente**, sobre el cual se puede aplicar posteriormente el *Principio del Colón*
+3. Si existe un lazo sobre un vértice $u$, **es equivalente a crear una única arista desde $u$ hacia un nuevo vértice auxiliar** (un nodo "flotante" exclusivo para esa arista)
+4. Esto significa que:
+* Si tienes una cantidad **PAR** de lazos, $1 \oplus 1 = 0$. Todos esos lazos se cancelan entre sí y **desaparecen**. El valor de Grundy que aportan es 0.
+* Si tienes una cantidad **IMPAR** de lazos, el resultado del XOR será **1**. Todos los lazos se reducen a **una única arista colgante de longitud 1** unida al vértice $u$.
+
+
+
+## 5. Problemas de Práctica
+
+- [ ] [Bob vs. ATM](https://www.codechef.com/AMR16MOS/problems/AMR16J)
+- [ ] [Game of CS](https://lightoj.com/problem/game-of-cs)
+- [X] [Got root?](https://www.hackerrank.com/greenhackenbush)  *(is to verify the implementation)*
+
+
+Other problem:
+- [ ] [Área de Rectángulos](https://www.hackerrank.com/greenhackenbush)
+
+
+## 6. Bibliografía de Referencia
+
+* Berlekamp, E. R., Conway, J. H., & Guy, R. K. (2001–2004). *Winning Ways for your Mathematical Plays* (Vol. 1, 2nd ed.). A K Peters[cite: 1]. *(Págs. 193–196 para la demostración del Principio de Fusión)*[cite: 1].
+
+
