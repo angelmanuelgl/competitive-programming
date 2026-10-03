@@ -46,7 +46,7 @@
                   (others branches)
 
                 id m % 2 == 0, then k1, .. km, will cancel out, leaving
-                ( becasse 1 xor 1 = 0)
+                ( because 1 xor 1 = 0)
                  u  - p_2 - ...-  p_x
                   \ 
                  (others branches)
@@ -176,9 +176,7 @@ struct ghb_r{
     vi nim; vvpii tree;
 };
 ghb_r ghb(int n, vector<edge> edges, const vi &suelo={} ){
-          pen.pop_back();
     ghb_r r;
-
     r.cntRepre = n;
     r.root = 0;
     
