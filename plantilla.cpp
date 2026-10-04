@@ -35,11 +35,16 @@ typedef vector<pll> vpll;
 // --- DEBUGER SETUP ---
 #ifdef LOCAL
     bool debug = true;
+    #define print(...) logger (#__VA_ARGS__,__VA_ARGS__)
 #else
     bool debug = false;
+    #define print(...)
 #endif
 
 #define DEBUG if(debug)
+#define DEBUG1 DEBUG cout <<
+#define DEBUG2 DEBUG1 "\n" << 
+#define DEBUG3 DEBUG1 "\n";
 #define NODEBUG if(!debug)
 
 // Overload for std::pair
@@ -55,7 +60,6 @@ ostream& operator<<(ostream &os, const C &v) {
     return os;
 }
 // Logger Function
-#define print(...) logger (#__VA_ARGS__,__VA_ARGS__)
 template<typename ...Args>
 void logger(string vars, Args&&... values){
     if( !debug ) return;
