@@ -58,136 +58,79 @@ ostream& operator<<(ostream &os, const C &v) {
     for(const T &x : v) os << sep << x, sep = " ";
     return os;
 }
-// Logger Function
+// Logger Func
 template<typename ...Args>
-void logger(string vars, Args&&... values){
+void logger(string vars, Args&&... vals){
     if( !debug ) return;
     cout << "[Debug]\n\t" << vars << " = ";
     string d = "[";
-    (..., (cout << d << values, d = "] ["));
+    (..., (cout << d << vals, d = "] ["));
     cout << "]\n";
 }
 
 const int MOD = 1e9 + 7;
 
-struct Function {
-	ll m;
-	ll b;
+struct Func {
+	ll m,b;
 	ll eval(ll x){
-		if (m == LLONG_MAX) return LLONG_MAX;
-		return m*x+b;
+		if( m == LLONG_MAX) return LLONG_MAX;
+		return (ll)((__int128_t)m * x + b);
 	}
-	Function(){ m = LLONG_MAX;}
-	Function(ll m_, ll b_): m(m_), b(b_){ }
-
+	Func(){ m = LLONG_MAX;}
+	Func(ll m_, ll b_): m(m_), b(b_){ }
 };
-
-ostream& operator<<(ostream &os, const Function &f){
+ostream& operator<<(ostream &os, const Func &f){
     return  os << f.m << "x+" << f.b ; 
 }
-
 struct LiChaoTree {
-	vll values;
+	vll vals;
 	ll maxV;
-	Function *functions;
-	LiChaoTree(vll &values_){
-		values = values_;
-		sort(all(values));
-		functions = new Function[sz(values) * 4 + 5];
-		maxV = sz(values);
+	Func *treefunc;
+	LiChaoTree(vll &vals_){
+		vals = vals_;
+		sort(all(vals));
+        vals.erase( std::unique( all(vals) ), vals.end() );
+		treefunc = new Func[sz(vals) * 4 + 5];
+		maxV = sz(vals);
 	}
-
-    void imprimir(void){
-        // for(int i=0; i<maxV; i++) DEBUG1  functions[i].m << "x+" << functions[i].b  << " ";
-        // cout << "\n"; 
-    }
-	//Range from l to r - 1
-	ll get(ll x){
-		return get(x, 1, 0, maxV);
-	}
-	ll get(ll x, int v, int l, int r){
-        DEBUG2 "llamando get\n";
-        print(x,v,l,r);
+	void addFunction(Func f){ addFunction(f, 1, 0, maxV); }
+	void addFunction(Func f, ll v, int l, int r){
 		int m = l + (r - l) / 2;
-		ll mv = values[m];
-
-        print(m,mv);
-		if ( l +1  == r){
-            DEBUG1 "entro l+1==r\n";
-            ll regresame =  functions[v].eval(x);
-            DEBUG1 "tomar valor y regresar " << regresame << "\n";
-			return regresame;
-		} else if (x < mv){
-			return min(functions[v].eval(x), get(x, 2 * v, l, m));
-		} else {
-			return min(functions[v].eval(x), get(x, 2 * v + 1, m, r));
-		}
-	}
-
-	void addFunction(Function f){
-		addFunction(f, 1, 0, maxV);
-	}
-
-	void addFunction(Function f, ll v, int l, int r){
-        // print(v,l,r, functions);
-		int m = l + (r - l) / 2;
-		ll mv = values[m];
-		ll lv = values[l];
-		bool lef = f.eval(lv) < functions[v].eval(lv);
-		bool mid = f.eval(mv) < functions[v].eval(mv);
-		if (mid){//Si el actual pierde en el medio
-			swap(functions[v], f);
-		}
-		if ( l  + 1== r)  return;
-		else if (lef != mid){//El cruce esta en el lado izq
-			addFunction(f, 2 * v,     l, m);
-		} else {
-			addFunction(f, 2 * v + 1, m, r);
-		}
+        ll mv = vals[m];
+        ll lv = vals[l];
+        bool lef = f.eval(lv) < treefunc[v].eval(lv); // min
+        bool mid = f.eval(mv) < treefunc[v].eval(mv); // min
+        if(mid) swap(treefunc[v], f);
+        if(r - l == 1) return;
+        else if(lef != mid) addFunction(f, 2 * v, l, m); 
+        else addFunction(f, 2 * v + 1, m, r);
 	}  
-
-    void transformCoordToIndices( int &l , int &r){
-        l = lower_bound(all(values), (ll)l) - values.begin();
-        r = lower_bound(all(values), (ll)r) - values.begin();
+    void addSegFunction( Func fi, int l, int r){//[l,r)->[i,j)
+        l = lower_bound(all(vals), (ll)l) - vals.begin();
+        r = lower_bound(all(vals), (ll)r) - vals.begin();
+        if( l < r ) addSeg(fi,l,r, 1,0,maxV );
     }
-
-    void addSegmentFunction( Function fi, int li, int ri){
-        transformCoordToIndices(li,ri);
-        addSegmentFunction(fi,li,ri, 1,0,maxV );
-    }
-
-    void addSegmentFunction( Function fi, int l, int r, int v, int left, int right){
-      
-        DEBUG2 "\nAgregando fucnion .. :\n";
-        print( fi, l, r );
-        print( v, left, right);
-        // agregar fi en intervalo [l,r)
-        // en cordenadas no // en indeices si
-
-
-        // nodo actual : idx = v rango =  [ left , right )
-    
-        
+    void addSeg(Func fi,int l,int r,int v,int left,int right){
         if( r <= left  || right <= l) return;
-        // completamente contneido 
         if( l <= left  && right <=  r  ){
-            DEBUG2 "ahora si agregar aqui\n";
-            print( fi,left, right);
             addFunction( fi, v, left, right);
-            DEBUG3
-            return;  // el resto se hare recursivo
+            return; 
         }
-        
-        if ( left +1 == right)  return;
-
-        
+        if( left +1 == right)  return;
         int m =  left + (right-left)/2;
-        addSegmentFunction(fi, l, r, v * 2     , left, m);
-        addSegmentFunction(fi, l, r, v * 2 + 1 , m, right);
-
+        addSeg(fi, l, r, v * 2     , left, m);
+        addSeg(fi, l, r, v * 2 + 1 , m, right);
     }
-
-	~LiChaoTree(){ delete[] functions; }
+    ll get(ll x){ return get(x, 1, 0, maxV); }
+	ll get(ll x, int v, int l, int r){
+        ll cur = treefunc[v].eval(x);
+        if(r - l == 1) return cur;
+        int m = l + (r - l) / 2;
+        ll mv = vals[m];
+        if(x < mv) return min(cur, get(x, 2 * v, l, m)); //min
+        else return min(cur, get(x, 2 * v + 1, m, r)); //min
+	}
+	~LiChaoTree(){ delete[] treefunc; }
 };
 
 // // // // // // // // // // // // // // // // // // // // // // //
@@ -250,9 +193,7 @@ int main(){
     for( int i=0; i<n; i++){
         DEBUG2 "agregar funcion:\n";
         print( a[i],b[i], l[i], r[i]);
-        lct.addSegmentFunction( {a[i],b[i]}, l[i], r[i] );
-
-        lct.imprimir();
+        lct.addSegFunction( {a[i],b[i]}, l[i], r[i] );
     }
 
      for( int i=0; i<q; i++){
@@ -260,8 +201,7 @@ int main(){
         if( queries[i].tipo == 0 ){
             DEBUG2 "quiery add:\n";
             print(queries[i].a,queries[i].b, queries[i].l, queries[i].r);
-            lct.addSegmentFunction( {queries[i].a,queries[i].b},queries[i].l,queries[i].r );
-            lct.imprimir();
+            lct.addSegFunction( {queries[i].a,queries[i].b},queries[i].l,queries[i].r );
         }
         // cosulta // min_i f_i(v)
         if( queries[i].tipo == 1){
