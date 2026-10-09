@@ -3,11 +3,12 @@
     * URL: https://codeforces.com/gym/105505
     * Problem: E. Evereth Expedition
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
+    * Topic: constuir
+    * Algorithm: para construir [1,n] fijate donde se debe poner el uno
+                en general para consturir [l,r] con numeros del k,...,n fijate donde debe ir k
+    * Complexity: O(n)
 
-    * Status: 
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
@@ -75,6 +76,122 @@ const int MOD = 1e9 + 7;
 // // // // // // // // // // // // // // // // // // // // // // //
 // // // // // // // // // // // // // // // // // // // // // // //
 
+/*
+
+    restantes: cantidad de valores en a[ini, fin] que son diferentes de 0 (originalmente),
+               es decir, valores en a[ini, fin] que YA ESTAN PUESTOS desde el inicio
+*/
+
+bool llenar( vi &a, int ini, int fin, int poner, int restantes, int idx_izq, int idx_der){
+    print( ini, fin, poner);
+    print(a);
+    print( restantes, idx_izq, idx_der);
+    
+    if( ini > fin ) return true;
+
+
+    // si no quedan elementos entonces no importa si lo ponemos a al derecha o izquierda
+    if( restantes <= 0 ){
+        a[ini] = poner;
+        return llenar(a, ini+1, fin, poner+1, 0, -1, -1 );
+    }
+
+
+    // --- ---  ---casos en los que hay algun valor en los extremos --- --- ---
+
+    // algo ... .. .. vacio
+    if( a[ini] && !a[fin] ){
+        // ya esta el numero a poner
+        if( a[ini] == poner) 
+            return llenar(a, ini+1, fin, poner+1, restantes-1, -1, idx_der );
+        // ponemos el numero a poner
+        else{
+            a[fin] = poner;
+            return llenar(a, ini, fin-1, poner+1, restantes, ini, idx_der );
+        }   
+    }
+
+    // vacio ... .. .. algo
+    if( !a[ini] && a[fin] ){
+        // ya esta el numeor a poner
+        if( a[fin] == poner) 
+            return llenar(a, ini, fin-1, poner+1, restantes-1, idx_izq, -1 );
+        // ponemos el numero a poner
+        else{
+            a[ini] = poner;
+            return llenar(a, ini+1, fin, poner+1, restantes, idx_izq, fin );
+        }   
+    }
+
+    // algo. ... . .. algo
+    if( a[ini] && a[fin] ){
+        if( a[ini] == poner) 
+            return llenar(a, ini+1, fin, poner+1, restantes-1, -1, fin );
+        else if( a[fin] == poner) 
+            return llenar(a, ini, fin-1, poner+1,restantes-1, ini, -1 );
+        else 
+            return false;
+    }
+
+    // --- --- --- nada en los extremos --- --- ---
+    // ahora empieza el caso donde vacio ... vacio 
+    // se cumple a[ini] == 0 && a[fin] == 0
+
+    // buscar el indice de mas a la derecha. e izuqierda der a izquierda 
+    // en total O(n), asi que O(1) amortizado
+    if( idx_izq == -1 ){
+        int it = ini ;
+        while( !a[it] ) it++;
+        idx_izq = it;
+    }
+    if( idx_der == -1 ){
+        int it = fin; 
+        while( !a[it] ) it--;
+        idx_der = it;
+    }
+
+    // --- un restante --- 
+
+    // piensa detalladamente en este caso 
+    // notar que las condiciones a verificar y en que orden
+    if( restantes ==1 ){
+        int idx = idx_izq;
+
+        // lo podemos "debemos"  poner en la derecha
+        if( idx - ini <= a[idx] - poner ){
+            a[ini] = poner;
+            return llenar(a, ini+1, fin, poner+1, restantes, idx_izq, idx_der );
+        }
+        // lo podemos "debemos" poner en la izquierda
+        else if( fin - idx <= a[idx] - poner  ){
+            a[fin] = poner;
+            return llenar(a, ini, fin-1, poner+1, restantes, idx_izq, idx_der );
+        }
+        // si no lo podemos "debemos" poner en nignun lado no es psoible
+        else{
+            return false;
+        }
+    }
+
+    // --- ahora sabemos que quedan 2  (alemenos)---
+    
+    // verificar idea greddy :  poner del lado mas chico
+
+    // poner en la izquierda
+    if( a[idx_izq]  < a[idx_der] ){
+        a[ini] = poner;
+        return llenar(a, ini+1, fin, poner+1, restantes, idx_izq, idx_der );
+    }
+
+    // ahora sabemos a[idx_izq] > a[idx_der]
+    
+    // poner en la izquierdda
+    a[fin] = poner;
+    return llenar(a, ini, fin-1, poner+1, restantes, idx_izq, idx_der );
+
+
+}
+
 
 // uso :  g++ -DLOCAL A.cpp
 int main(){
@@ -86,150 +203,23 @@ int main(){
         cout.tie(0);
     #endif
 
+   
     int n; cin >> n;
-    vi a(n+1); 
-    vi b, idxb_to_idxa;
-    for(int i=1; i<=n; i++){
-        cin >> a[i];
-        if( a[i] ){ 
-            b.pb(a[i]);    
-            idxb_to_idxa.pb(i);
-        }
+    int cnt_neq0 = 0;
+    vi a(n); for( int&x:a){
+        cin >> x;
+        if( x ) cnt_neq0++;
     }
-    print(a);
 
 
-    // VERFICIAR SI CRECE Y LEUGO DECRECE
+    bool esPosible = llenar( a, 0, n-1, 1, cnt_neq0, -1, -1 );
+
+    if( !esPosible ){
+        cout << "*\n"; return 0;
+    }
+
+    for( int i=0; i<n; i++){
+        cout << a[i] << " \n"[i==n-1];
+    }
     
-    bool decreciendo = false;
-    int m = b.size();
-    bool esposible = true;
-    // si todos fueron inleibles
-    if( m == 0 ){
-        for( int i=1; i<=n; i++) cout << i << " \n"[i==n];
-        return 0;
-    }
-    // tenemos almenos 1
-
-    // suiponemos que simepr ecrece hasta que pase lo contrari
-    for(int i=1; i<m; i++){
-        // marcar en el primer decrecimiento
-        if( b[i-1] > b[i] ) decreciendo = true;
-        // si no respeta etapa de decreciemiento
-        if( decreciendo && b[i-1] < b[i] ) esposible = false;
-    }
-
-    if( !esposible ){
-        cout << "*\n";
-        return 0;
-    }
-
-
-    // CONSTRUIR MAPEO
-
-    // poner como 1 2 3 4 ... n-1 n n-1 .. 3 2 1
-    vi mape(n+1);
-
-    // nos dice que indice le corresponde
-    vi decre_to_map(n+1);
-    iota(all(mape),0 );
-    for( int i=n-1; i>=1; i--){
-        decre_to_map[i] = sz(mape); 
-        mape.pb(i);
-    } 
-    int smap  = sz(mape);
-
-    // MAPEAR
-    print(mape);
-    print(decre_to_map);
-
-    vector<bool> esta_usado(n+1,false); // numeros
-    vector<bool> used(2*n,false); // mapeo
-    vector<int> creciendo(n+1,-1); //
-    print(used);
-    decreciendo = false;
-    // el primero siempre esta en la etapa de creciendo
-    used[ b[0]  ] = true;
-    esta_usado[ b[0] ]  = true; 
-    creciendo[ idxb_to_idxa[0] ] = 1;
-
-    for(int i=1; i<m; i++){
-        if( b[i-1] > b[i] ){
-            decreciendo = true;      
-        }
-        esta_usado[ b[i] ] = true;
-        creciendo[ idxb_to_idxa[i] ] = (decreciendo)?0:1;
-
-        // creciendo
-        if( !decreciendo ){
-            used[ b[i]  ] = true;
-        }
-        if( decreciendo ){
-            used[ decre_to_map[ b[i] ] ] = true;
-        }
-    }
-
-    print(mape);
-    print(used);
-    print(creciendo);
-
-
-
-    int idx = 1;
-    vi ans = a;
-    for( int i=1; i<=n; i++){
-
-        print( i, idx, ans[i]);
-        print( ans );
-        print( esta_usado );
-        if( ans[i] == 0 ){
-            while( idx < smap  && esta_usado[ mape[idx] ]  ) idx++;
-            
-            // si no enocntramos ninguno que no este usado no es posible
-            if( ( idx == smap-1 && esta_usado[ mape[idx] ]) || idx >=smap ){
-                cout << "*\n";
-                return 0;
-            }
-
-            ans[i] = mape[idx];
-            esta_usado[ mape[idx] ] = true;
-            idx++;
-        }else{
-            if( creciendo[ i ]  ) idx = ans[i]+1;
-            else idx = decre_to_map[ ans[i]] +1;
-            print( creciendo[ ans[i] ], idx   );
-        }
-        print( i, ans);
-    }
-    print(a);
-    print(ans);
-
-    // si de csualdiad me deje alguno sinusar
-    for( int i=1; i<= n; i++){
-        if( !esta_usado[ i ] ){
-            cout << "*\n";
-            return 0; 
-        }
-    }
-
-    // ve rsi cumple crece y decrece 
-    bool respuesta_correcta = true;
-    bool ans_decreciendo = false;
-     // suiponemos que simepr ecrece hasta que pase lo contrari
-    for(int i=1; i<=n; i++){
-        // marcar en el primer decrecimiento
-        if( ans[i-1] > ans[i] ) ans_decreciendo = true;
-        // si no respeta etapa de decreciemiento
-        if( ans_decreciendo && ans[i-1] < ans[i] ) respuesta_correcta = false;
-    }
-
-    if( !respuesta_correcta ){
-        cout << "*\n";
-        return 0;
-    }
-
-
-    for( int i=1; i<= n; i++){
-        cout << ans[i] << " \n"[i==n];
-    }
 }
