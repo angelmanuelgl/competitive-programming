@@ -3,9 +3,10 @@
     * URL: https://youkn0wwho.academy/topic-list/li_chao_tree
     * Problem: Kalila and Dimna in the Logging Industry
     * ULR: https://codeforces.com/edu/courses
-    * Status: Accepted
-    * Algorithm: 
-    * Complexity: 
+    * Status: ACCEPTED
+    * Algorithm: dp[i] minimum cost to cut completely the i tree
+                 ans = dp[0], after all cut is free
+    * Complexity: O( N log N)
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
@@ -75,8 +76,6 @@ const int MOD = 1e9 + 7;
 // // // // // // // // // // // // // // // // // // // // // // //
 
 
-vi a,ac,b;
-
 struct Func {
 	ll m,b;
 	ll eval(ll x){
@@ -112,22 +111,6 @@ struct LiChaoTree {
         else if(lef != mid) addFunction(f, 2 * v, l, m); 
         else addFunction(f, 2 * v + 1, m, r);
 	}  
-    void addSegFunction( Func fi, int l, int r){//[l,r)->[i,j)
-        l = lower_bound(all(vals), (ll)l) - vals.begin();
-        r = lower_bound(all(vals), (ll)r) - vals.begin();
-        if( l < r ) addSeg(fi,l,r, 1,0,maxV );
-    }
-    void addSeg(Func fi,int l,int r,int v,int left,int right){
-        if( r <= left  || right <= l) return;
-        if( l <= left  && right <=  r  ){
-            addFunction( fi, v, left, right);
-            return; 
-        }
-        if( left +1 == right)  return;
-        int m =  left + (right-left)/2;
-        addSeg(fi, l, r, v * 2     , left, m);
-        addSeg(fi, l, r, v * 2 + 1 , m, right);
-    }
     ll get(ll x){ return get(x, 1, 0, maxV); }
 	ll get(ll x, int v, int l, int r){
         ll cur = treefunc[v].eval(x);
@@ -139,7 +122,6 @@ struct LiChaoTree {
 	}
 	~LiChaoTree(){ delete[] treefunc; }
 };
-
 
 // uso :  g++ -DLOCAL A.cpp
 int main(){
@@ -153,68 +135,22 @@ int main(){
 
 
     int n; cin >> n;
+    vll a(n); for( ll &x:a) cin >>x;
+    vll b(n); for( ll &x:b) cin >>x;
 
-    a.resize(n+1);b.resize(n+1);ac.resize(n+1);
-    for(  int i=1; i<=n; i++ ) cin >> a[i];
-    for(  int i=1; i<=n; i++ ) cin >> b[i];
+    print(a,b);
 
-    // vector de acumulados
-    ac[0] = 0;
-    for( int i=1; i<=n; i++) ac[i] = ac[i-1] + a[i];
-
-    print(a,b,ac);
-
-
-
-    // dp[i] = minima costo para talar el i-simo arbole
-    vll dp(n+1,LLONG_MAX);
-    // talar el primero siempre da costo 0
-    dp[1] = 0;
-
-    /*
-        observacion importante si  
-        1. talo el i-simo arbol
-        2. y luego el j-esimo arbol con   i < j
-        costo += b_k * a_i + b_i * a_j
-        me convien hacerlo alrevez
-        costo += b_k * a_j + b_j * a_i
-    */
-    
-    for( int i=2; i<=n; i++){
-        dp[i] = LLONG_MAX;
-        DEBUG1 "dp[ " <<  i << " ] =   min{\n"; 
-
-        //  i-esimo arbol lo talamos despues de talar el arbol k
-        // 1 2 3 4 ... k (aqui) k+1 k+2
-        for( int k=1; k<=i-1; k++){
-            // costo por talar los k primeros arboles
-            ll costo_anterior = dp[k];
-
-            // costo por talar el k+1 // indice i
-            // tiene tam a[i] y cuesta recargar b[k]
-            // porque el mas grande que se talo fue el arbol k
-            ll costo_este = a[i] * b[k];
-
-            // costo total por talar el i-esimo arbol
-            // en el moemnto k+1
-            ll costo = costo_anterior + costo_este ;
-            dp[i] = min( dp[i], costo );
-
-            DEBUG1 " dp[ " << k << " ]";
-            DEBUG1 " +  a[ " << i << " ]";
-            DEBUG1 "*b[ " << k << " ]";
-            print(costo_anterior,costo_este);
-        }
-
-        DEBUG1 "}\n\n";
+    LiChaoTree lct(a);
+    vll dp(n,0);
+    dp[0] = 0;
+    lct.addFunction( { b[0], dp[0] });
+    for( int i=1; i<n; i++){
+        // dp[i] = min_{ 0 <= j < i}{ dp[j] + b[j]a[i]}
+        dp[i] = lct.get(a[i]);
+        lct.addFunction({b[i], dp[i]});
+        print( i , dp[i], f );
     }
-
-
     print(dp);
-
-    cout << dp[n] << "\n";
-    
-
-
+    cout << dp[n-1] << "\n";
     
 }
