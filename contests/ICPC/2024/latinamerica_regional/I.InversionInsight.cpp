@@ -13,8 +13,9 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-// --- Type Aliases ---
+// --- --- Type Aliases --- ---
 typedef int64_t ll;
+typedef __int128 lll;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef vector<int> vi;
@@ -24,15 +25,15 @@ typedef vector<vll> vvll;
 typedef vector<pii> vpii;
 typedef vector<pll> vpll;
 
-// --- Short Macros ---
+// --- --- Short Macros --- ---
 #define fi first
 #define se second
 #define pb push_back
 #define all(x) (x).begin(), (x).end()
 #define sz(x) (int)(x).size()
+#define rep(i,a,b) for( int i=a; i< (b); ++i )
 
-
-// --- DEBUGER SETUP ---
+// --- --- DEBUGER SETUP --- ---
 #ifdef LOCAL
     bool debug = true;
     #define print(...) logger (#__VA_ARGS__,__VA_ARGS__)
@@ -42,11 +43,21 @@ typedef vector<pll> vpll;
 #endif
 
 #define DEBUG if(debug)
-#define DEBUG1 DEBUG cout <<
-#define DEBUG2 DEBUG1 "\n" << 
-#define DEBUG3 DEBUG1 "\n";
+#define DEBUGC DEBUG cout <<
+#define SALTO DEBUGC "\n";
 #define NODEBUG if(!debug)
 
+namespace DebugColors {
+    const string RED = "\033[1;31m";
+    const string GREEN = "\033[1;32m";
+    const string YELLOW = "\033[1;33m";
+    const string CYAN = "\033[1;36m";
+    const string RESET = "\033[0m";
+}
+#define COL DEBUGC DebugColors::YELLOW << 
+#define COLEND DEBUGC DebugColors::RESET << "\n";
+
+// --- --- LOGGER SETUP --- ---
 // Overload for std::pair
 template<typename A, typename B>
 ostream& operator<<(ostream &os, const pair<A, B> &p) {
@@ -69,6 +80,7 @@ void logger(string vars, Args&&... values){
     cout << "]\n";
 }
 
+// --- --- CONSTANTES --- ---
 const int MOD = 1e9 + 7;
 
 
@@ -77,19 +89,27 @@ const int MOD = 1e9 + 7;
 
 // g++-16 -DLOCAL -Wl,-stack_size,0x20000000 I.InversionInsight.cpp
 // para cualquer n con x = 190 basta
-// para n > =21 con 100 basta
-// para n>=54 con MAXx = 22 nasta <-- NOS E cehjar bien 
-const int MAXN = 500;
-const int MAXK = 1e3;
-const ll MAXREALK = 4e18;
 
-ll dp[MAXN+1][MAXN+1];
-ll maxkn[MAXN+1];
+const int MAXN = 200000;
+const int MAXX = 191;
+const ll MAXK = 4e18;
+
+lll dp[MAXN+1][MAXX+1];
+ll max_x_para_n[MAXN+1];
+
+bool imprimir(int i){
+    if( i<100 ) return true;
+    if( i <1000) return  !( i% 5);
+    if( i <10000) return !( i% 50);
+    if( i <100000) return!( i% 500);
+    if( i <1000000) return !( i% 5000);
+    return  !( i% 50000);
+}
 
 // uso :  g++ -DLOCAL A.cpp
 int main(){
     #ifdef LOCAL
-        ifstream cin("in.in");
+        // ifstream cin("in.in");
     #else
         ios_base::sync_with_stdio(0); 
         cin.tie(0);
@@ -97,47 +117,86 @@ int main(){
     #endif
     
 
-    ll maxKval = 0;
-    
-    int n; 
-    n = MAXN;
-    for( int i=1; i<=n; i++ ) dp[i][0] = 1;
-    // for( int i=1; i<=n; i++ ) dp[i].pb(1);
+    int n; cin >> n;
+    ll k; cin >> k;
 
+    ll max_x = 0;
     ll acum = 0;
+
     // llenar dp
-    for( int i=2; i<=n ;i++){
+    for( int i=1; i<=n ;i++){
         acum = 1;
-        DEBUG cout << "n = " << i << " :\n";
-        for( int k=1; k<= min( (i-1)*i/2 , MAXK ); k++){
-            ll posans = dp[i][k-1] + dp[i-1][k];
-            if( k- i >=0 ) posans -= dp[i-1][k-i];
-            
-            // dp[i].pb( posans );
-            dp[i][k] = posans;
-            
-            acum += posans;
-            
-            maxkn[i] = k;
-            DEBUG1 dp[i][k] << "  "; 
-            if( acum > MAXREALK ){  
+        dp[i][0] = 1;
+        for( int x=1; x<= min( (ll)MAXX, (ll)(i-1)*i/2   ); x++){
+            lll posans = dp[i][x-1] + dp[i-1][x];
+            if( x- i >=0 ) posans -= dp[i-1][x-i];
+            max_x_para_n[i] = x;
+            dp[i][x] = (ll)min(posans, (lll)MAXK);
+            if( acum > MAXK - posans ){  
                 break;
+            }
+            acum+= posans;
+
+           
+        }
+        max_x = max( max_x, max_x_para_n[i]);
+    }
+
+    // revisar que el max_x sea decreciente
+    // revisar esto nos asegura(nos da un indicio)que dp fue calculado bie
+    DEBUG{
+    print( max_x );
+    int ant = -1;
+    for( int i=0; i<=n; i++){  
+        if( imprimir(i) ){
+            if( ant < max_x_para_n[i] ) COL "";
+            print(i, max_x_para_n[i]);
+            if( ant < max_x_para_n[i] ) COLEND;
+        } 
+        ant = max_x_para_n[i];
+    }
+    }
+
+    // revisar que si encontramso biena. que blqoeu pertence
+    DEBUG{
+        rep(x,0,20) cout << (ll)dp[n][x] << " ";
+        SALTO
+  
+        rep(kk, 1, k){
+            lll permutaciones_menores = 0;
+            int bloque_actual = 0;
+            for( int x=0; x<=MAXX; x++){
+                // print(x, permutaciones_menores);
+                bloque_actual = x;
+                // para pasar al sigueinte bloque tengo que
+                // tener un indice k mayor que todo lo anteiro
+                if( ! ( kk > permutaciones_menores + dp[n][x]) ) break;
+
+                permutaciones_menores += dp[n][x];
             }
 
             
+            ll new_k = kk - permutaciones_menores;
+            print(kk, bloque_actual, new_k);
         }
-        DEBUG3;
-        DEBUG cout << " -> " <<  i << " " << maxkn[i] <<  " " << maxKval  << "\n";
-        maxKval = max( maxKval, maxkn[i]);
     }
 
-    print( maxkn );
-    // DEBUG{
-    // for( int i=1; i<=n; i++){
-    //     cout << i << " :\n";
-    //     for( int k=0; k<= (i-1)*i/2; k++) cout << dp[i][k] << " "; 
-    //     DEBUG3;
-    // }
+    lll permutaciones_menores = 0;
+    int bloque_actual = 0;
+    for( int x=0; x<=MAXX; x++){
+        // print(x, permutaciones_menores);
+        bloque_actual = x;
+        // para pasar al sigueinte bloque tengo que
+        // tener un indice k mayor que todo lo anteiro
+        if( ! ( k > permutaciones_menores + dp[n][x]) ) break;
 
+        permutaciones_menores += dp[n][x];
+    }
+
+    
+    ll new_k = k - permutaciones_menores;
+    print(k, bloque_actual, new_k);
+
+    ll x = bloque_actual; // cantidad de inversiones en este bloque // hay a lo mas (n-1)*n/2
 
 }
