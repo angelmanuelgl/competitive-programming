@@ -30,7 +30,7 @@ typedef vector<pll> vpll;
 #define pb push_back
 #define all(x) (x).begin(), (x).end()
 #define sz(x) (int)(x).size()
-
+#define rep(i,a,b) for( int i=a; i< (b); ++i )
 
 // --- DEBUGER SETUP ---
 #ifdef LOCAL
