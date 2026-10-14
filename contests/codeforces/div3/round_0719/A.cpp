@@ -1,8 +1,8 @@
 /*  
     * Contest: Codeforces Round 719 (Div. 3)
     * URL: https://codeforces.com/contest/1520
-    * Problem: 
-    * Status: 
+    * Problem: A Do Not Be Distracted!
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
