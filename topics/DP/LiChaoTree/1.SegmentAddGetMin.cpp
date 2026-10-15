@@ -1,7 +1,8 @@
 /*  
     * Contest: Topic List : Li Chao Tree
     * URL: https://youkn0wwho.academy/topic-list/li_chao_tree
-    * Problem: Segment Add Get Min
+    * Problem:  LIBRARY CHECKER | Segment Add Get Min
+    * URL : https://judge.yosupo.jp/problem/segment_add_get_min
     * Status: Accepted
     * Algorithm:  Li Chao Tree sobre coordenadas comprimidas (solo los p de las consultas de tipo 1),
     *            con inserción de segmentos como Segment Tree descomponiendo [l, r) en O(log M) nodos
@@ -69,6 +70,10 @@ void logger(string vars, Args&&... vals){
 }
 
 const int MOD = 1e9 + 7;
+
+// // // // // // // // // // // // // // // // // // // // // // //
+// // // // // // // // // // // // // // // // // // // // // // //
+
 
 struct Func {
 	ll m,b;
@@ -148,9 +153,7 @@ int main(){
     #ifdef LOCAL
         ifstream cin("in.in");
     #else
-        ios_base::sync_with_stdio(0); 
-        cin.tie(0);
-        cout.tie(0);
+        ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
     #endif
 
     int n,q; cin >> n >> q;
