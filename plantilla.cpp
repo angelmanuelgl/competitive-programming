@@ -1,16 +1,4 @@
-/*  
-    * Contest: 
-    * URL: 
-    * Problem: 
-
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
-
-    * Status: 
-    * angelmanuelgl
-*/
-#include<bits/stdc++.h>
+include<bits/stdc++.h>
 using namespace std;
 
 // --- --- --- --- Type Aliases --- --- --- ---
@@ -34,7 +22,8 @@ typedef vector<pll> vpll;
 
 const int MOD = 1e9 + 7;
 
-// --- --- --- --- LOGGER SETUP --- --- --- ---    
+// --- --- --- --- LOGGER SETUP --- --- --- --- 
+// Daclare before   
 template<typename C, typename T = typename enable_if<!is_same<C, string>::value, typename C::value_type>::type>
 ostream& operator<<(ostream &os, const C &v);
 // Overload for std::pair
@@ -49,7 +38,7 @@ ostream& operator<<(ostream &os, const C &v) {
     for(const T &x : v) os << sep << x, sep = " ";
     return os;
 }
-// colores
+// Colors
 constexpr const char *RST="\033[0m", *GREEN="\033[1;32m", 
 *YELLOW="\033[1;33m",*CYAN="\033[1;36m",*RED="\033[1;31m";
 // Logger Function
@@ -76,8 +65,6 @@ void logger(const char* col, string vars, Args&&... values){
 #endif
 
 // // // // // // // // // // // // // // // // // // // // //
-
-
 // for f in {a..n}; do cp template.cpp $f.cpp; done
 // uso :  g++ -DLOCAL A.cpp
 int main(){
