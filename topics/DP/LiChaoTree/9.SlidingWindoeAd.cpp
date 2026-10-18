@@ -5,7 +5,8 @@
     * Problem: CSES Problem Set | Sliding Window Advertisement
     * URL: https://cses.fi/problemset/task/3227
 
-    * Status: 
+    * Topic: monotonic stack | Li Chao tree | Next Lower Element
+    * Status: ACCEPTED
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
@@ -80,15 +81,20 @@ void logger(const char* col, string vars, Args&&... values){
 struct Func {
 	ll m,b;
 	ll eval(ll x){
-		if( m == LLONG_MAX) return LLONG_MAX;
+		if( m == LLONG_MIN) return LLONG_MIN;
 		return (ll)((__int128_t)m * x + b);
 	}
-	Func(){ m = LLONG_MAX;}
+	Func(){ m = LLONG_MIN;}
 	Func(ll m_, ll b_): m(m_), b(b_){ }
+
+    Func& operator*=(ll h){ 
+        this-> m *= h; this-> b *= h; return *this;
+    }
 };
 ostream& operator<<(ostream &os, const Func &f){
     return  os << f.m << "x+" << f.b ; 
 }
+
 struct LiChaoTree {
 	vll vals;
 	ll maxV;
@@ -105,14 +111,18 @@ struct LiChaoTree {
 		int m = l + (r - l) / 2;
         ll mv = vals[m];
         ll lv = vals[l];
-        bool lef = f.eval(lv) < treefunc[v].eval(lv); // min
-        bool mid = f.eval(mv) < treefunc[v].eval(mv); // min
+        bool lef = f.eval(lv) > treefunc[v].eval(lv); // min
+        bool mid = f.eval(mv) > treefunc[v].eval(mv); // min
         if(mid) swap(treefunc[v], f);
         if(r - l == 1) return;
         else if(lef != mid) addFunction(f, 2 * v, l, m); 
         else addFunction(f, 2 * v + 1, m, r);
 	}  
     void addSegFunction( Func fi, int l, int r){//[l,r)->[i,j)
+        if( l > r ) return;
+        r++;
+        l = max(0,l);
+        r = min(r, (int)vals[maxV-1] );
         l = lower_bound(all(vals), (ll)l) - vals.begin();
         r = lower_bound(all(vals), (ll)r) - vals.begin();
         if( l < r ) addSeg(fi,l,r, 1,0,maxV );
@@ -134,8 +144,8 @@ struct LiChaoTree {
         if(r - l == 1) return cur;
         int m = l + (r - l) / 2;
         ll mv = vals[m];
-        if(x < mv) return min(cur, get(x, 2 * v, l, m)); //min
-        else return min(cur, get(x, 2 * v + 1, m, r)); //min
+        if(x < mv) return max(cur, get(x, 2 * v, l, m)); //min
+        else return max(cur, get(x, 2 * v + 1, m, r)); //min
 	}
 	~LiChaoTree(){ delete[] treefunc; }
 };
@@ -154,7 +164,6 @@ vll calc_left( int n, vll & h ){
         while( ms.top().fi >= h[i] ) ms.pop();
         ans[i] = ms.top().se + 1;
         ms.push({h[i],i});
-        SALTO;
     } 
     return ans;
 }
@@ -187,12 +196,115 @@ int main(){
     h[0] = h[n+1] = 0;
     rep(i, 1, n+1) cin >> h[i]; 
 
+    
+    // monotonic stack
     LOG(h);
+
 
     vll l = calc_left(n,h);
     LOG(l); 
 
     vll r = calc_right(n,h);
     LOG(r);
+
+
+    vll dom(n+3); iota(all(dom), 0);
+    LOG(dom);
+
+    LiChaoTree lct(dom);
+
+    SALTO;
+
+
+
+    // para cada pos i el rango que tiene altura hi es [li,ri]
+    // intersectando con la ventana [i, i+k-1] tenemos
+    // [ max( li,x ), min( ri, x+k-1 ) ] 
+    // para cada posicion j, el rectangulo mas grande que se puede obtener es
+    // ans_j( x ) = hj * d( max(lj, i), min(rj,i+k-1) )
+
+    // wi(x) = max( 0,  min(rj,i+k-1) -  max(lj, i) +1   )
+    // wi(x) = max( 0,  min(k, ri-li+1, x+k-li, ri-x+1) )
+
+    // asi ans_j(x) = hj · w(x)
+    // notar que w(x) son 3 rectas en 3 intervalos, por lo que podemos agregar esa funcion h_jw(x) al lct
+    
+    for( int i=1; i<=n; i++ ){
+        int R = r[i], L = l[i];
+        int large = R - L + 1  ;
+    
+        if( k < large){
+            COL(YELLOW, "i: " << i <<  " ->  caso 1:");
+            // [ ..., L-k -1 ] vale 0
+
+            // f(x) = 1 * (x - L) // [L-k, L]
+            // f(x) = 0  , 1,  2 , ... ,  k 
+            //   x  = L-k                 L
+            Func f1 = {1, -(L-k) };
+            f1 *=  h[i];
+            LOG(i,f1);
+            lct.addSegFunction(f1 , L-k, L);
+
+            // f(x) = k // [L, R-k+1]
+            // f(x) = k , ... , k
+            //   x  = L         R-k+1
+            Func f2 = {0, k };
+            f2*=  h[i];
+            lct.addSegFunction(f2 , L, R -k +1  );
+
+            // f(x) = -1 * (x - (R-k+1) ) + k  // [R-k+1, R] 
+            // f(x) = k , k-1, k-2, .... , 2, 1
+            //   x  = R-K+1                   R
+            Func f3 = {-1, +(R-k+1) + k  }; 
+            f3*=  h[i];
+            lct.addSegFunction(f3 , R -k +1 , R );
+
+            LOG(i, h[i], L, R );
+            LOG(f1,f2,f3);
+
+            // [R+1, ...]  vale 0 
+        }
+        else if( k >=large ){
+            COL(YELLOW, "i: " << i <<  " ->  caso 2:");
+            // [ ..., L-k -1 ] vale 0
+
+            // f(x) = 1 * (x - L) // [L-k, R-k+1]
+            // f(x) = 0  , 1,  2 , ... ,  large 
+            //   x  = L-k                 R-k+1
+            Func f1 = {1, -(L-k) };
+            f1 *=  h[i];
+            lct.addSegFunction(f1 , L-k, R-k+1 );
+
+            // f(x) =  large // [ R-k+1, L]
+            // f(x) = large , ... , large
+            //   x  = L         R-k
+            Func f2 = {0, large };
+            f2 *= h[i];
+            lct.addSegFunction(f2 , R-k+1, L  );
+
+            // f(x) = -1 * (x - (L) ) + large  // [R-k, R] 
+            // f(x) = k , k-1, k-2, .... , 2, 1
+            //   x  = R-K                     R
+            Func f3 = {-1,  L +large };
+            f3 *=  h[i]; 
+            lct.addSegFunction(f3 , L, R );
+
+            LOG(i, h[i], L, R );
+            LOG(f1,f2,f3);
+            // [R+1, ...]  vale 0
+        }
+
+        SALTO;
+    }
+
+    vll ans(n-k+1);
+    for( int i=1; i<=n-k+1 ; i++){
+        ans[i-1] = lct.get(i);
+    }
+    LOG(ans);
+
+    rep(i,0,n-k+1){
+        cout << ans[i] << " \n"[i==n-k];
+    }
 
 }
