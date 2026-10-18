@@ -1,13 +1,9 @@
 /*  
-    * Contest: 
-    * URL: 
-    * Problem: 
+    * Contest: 2024-2025 ICPC Latin American Regional Programming Contest
+    * URL: https://codeforces.com/gym/105505
+    * Problem: I. Inversion Insight
 
-    * Topic: 
-    * Algorithm: 
-    * Complexity: 
-
-    * Status: 
+    * Status: no completed yet
     * angelmanuelgl
 */
 #include<bits/stdc++.h>
@@ -33,56 +29,51 @@ typedef vector<pll> vpll;
 #define sz(x) (int)(x).size()
 #define rep(i,a,b) for( int i=a; i< (b); ++i )
 
-// --- --- DEBUGER SETUP --- ---
-#ifdef LOCAL
-    bool debug = true;
-    #define print(...) logger (#__VA_ARGS__,__VA_ARGS__)
-#else
-    bool debug = false;
-    #define print(...)
-#endif
+#define rep(i,a,b) for( int i=a; i< (b); ++i )
 
-#define DEBUG if(debug)
-#define DEBUGC DEBUG cout <<
-#define SALTO DEBUGC "\n";
-#define NODEBUG if(!debug)
+const int MOD = 1e9 + 7;
 
-namespace DebugColors {
-    const string RED = "\033[1;31m";
-    const string GREEN = "\033[1;32m";
-    const string YELLOW = "\033[1;33m";
-    const string CYAN = "\033[1;36m";
-    const string RESET = "\033[0m";
-}
-#define COL DEBUGC DebugColors::YELLOW << 
-#define COLEND DEBUGC DebugColors::RESET << "\n";
-
-// --- --- LOGGER SETUP --- ---
+// --- --- --- --- LOGGER SETUP --- --- --- --- 
+// Daclare before   
+template<typename C, typename T = typename enable_if<!is_same<C, string>::value, typename C::value_type>::type>
+ostream& operator<<(ostream &os, const C &v);
 // Overload for std::pair
 template<typename A, typename B>
 ostream& operator<<(ostream &os, const pair<A, B> &p) {
     return os << '(' << p.fi << ", " << p.se << ')';
 }
-// Overload for Containers (excluding std::string) via SFINAE
-template<typename C, typename T = typename enable_if<!is_same<C, string>::value, typename C::value_type>::type>
+// Overload for Containers (excluding std::string) SFINAE
+template<typename C, typename T>
 ostream& operator<<(ostream &os, const C &v) {
     string sep;
     for(const T &x : v) os << sep << x, sep = " ";
     return os;
 }
+// Colors
+constexpr const char *RST="\033[0m", *GREEN="\033[1;32m", 
+*YELLOW="\033[1;33m",*CYAN="\033[1;36m",*RED="\033[1;31m";
 // Logger Function
 template<typename ...Args>
-void logger(string vars, Args&&... values){
-    if( !debug ) return;
-    cout << "[Debug]\n\t" << vars << " = ";
-    string d = "[";
-    (..., (cout << d << values, d = "] ["));
-    cout << "]\n";
+void logger(const char* col, string vars, Args&&... values){
+    cerr << col << '[' << vars << "] =" << RST;
+    ((cerr << " [" << values << ']'), ...);
+    cerr << '\n';
 }
 
-// --- --- CONSTANTES --- ---
-const int MOD = 1e9 + 7;
-
+// --- --- --- --- DEBUGGER SETUP --- --- --- ---    
+#ifdef LOCAL
+ #define DEBUG   if (true)
+ #define SALTO   (cerr << '\n')  
+ #define LOG(...)   logger("", #__VA_ARGS__, __VA_ARGS__)
+ #define LOGC(c, ...) logger(c, #__VA_ARGS__, __VA_ARGS__)    
+ #define COL(c, ...) (cerr << c << __VA_ARGS__ << RST << '\n')
+#else
+    #define DEBUG   if (false) 
+    #define SALTO
+    #define LOG(...)
+    #define LOGC(...)
+    #define COL(...)
+#endif
 
 // // // // // // // // // // // // // // // // // // // // // // //
 // // // // // // // // // // // // // // // // // // // // // // //
@@ -116,7 +107,6 @@ int main(){
         cout.tie(0);
     #endif
     
-
     int n; cin >> n;
     ll k; cin >> k;
 
@@ -136,51 +126,51 @@ int main(){
                 break;
             }
             acum+= posans;
-
-           
+  
         }
         max_x = max( max_x, max_x_para_n[i]);
     }
 
     // revisar que el max_x sea decreciente
     // revisar esto nos asegura(nos da un indicio)que dp fue calculado bie
-    DEBUG{
-    print( max_x );
-    int ant = -1;
-    for( int i=0; i<=n; i++){  
-        if( imprimir(i) ){
-            if( ant < max_x_para_n[i] ) COL "";
-            print(i, max_x_para_n[i]);
-            if( ant < max_x_para_n[i] ) COLEND;
-        } 
-        ant = max_x_para_n[i];
-    }
-    }
+    // DEBUG{
+    // print( max_x );
+    // int ant = -1;
+    // for( int i=0; i<=n; i++){  
+    //     if( imprimir(i) ){
+    //         if( ant < max_x_para_n[i] ) COL "";
+    //         print(i, max_x_para_n[i]);
+    //         if( ant < max_x_para_n[i] ) COLEND;
+    //     } 
+    //     ant = max_x_para_n[i];
+    // }
+    // }
 
     // revisar que si encontramso biena. que blqoeu pertence
-    DEBUG{
-        rep(x,0,20) cout << (ll)dp[n][x] << " ";
-        SALTO
+    // DEBUG{
+    //     rep(x,0,20) cout << (ll)dp[n][x] << " ";
+    //     SALTO
   
-        rep(kk, 1, k){
-            lll permutaciones_menores = 0;
-            int bloque_actual = 0;
-            for( int x=0; x<=MAXX; x++){
-                // print(x, permutaciones_menores);
-                bloque_actual = x;
-                // para pasar al sigueinte bloque tengo que
-                // tener un indice k mayor que todo lo anteiro
-                if( ! ( kk > permutaciones_menores + dp[n][x]) ) break;
+    //     rep(kk, 1, k){
+    //         lll permutaciones_menores = 0;
+    //         int bloque_actual = 0;
+    //         for( int x=0; x<=MAXX; x++){
+    //             // print(x, permutaciones_menores);
+    //             bloque_actual = x;
+    //             // para pasar al sigueinte bloque tengo que
+    //             // tener un indice k mayor que todo lo anteiro
+    //             if( ! ( kk > permutaciones_menores + dp[n][x]) ) break;
 
-                permutaciones_menores += dp[n][x];
-            }
+    //             permutaciones_menores += dp[n][x];
+    //         }
 
             
-            ll new_k = kk - permutaciones_menores;
-            print(kk, bloque_actual, new_k);
-        }
-    }
+    //         ll new_k = kk - permutaciones_menores;
+    //         print(kk, bloque_actual, new_k);
+    //     }
+    // }
 
+    // a que lboque pertenece
     lll permutaciones_menores = 0;
     int bloque_actual = 0;
     for( int x=0; x<=MAXX; x++){
@@ -195,8 +185,13 @@ int main(){
 
     
     ll new_k = k - permutaciones_menores;
-    print(k, bloque_actual, new_k);
+    dbg(k, bloque_actual, new_k);
 
     ll x = bloque_actual; // cantidad de inversiones en este bloque // hay a lo mas (n-1)*n/2
+
+
+    // To Do ...
+    // dada uan cantidad de permutaciones x, encontrar la k-esima permutacion de n elementos
+    // 
 
 }

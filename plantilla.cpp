@@ -1,4 +1,14 @@
-include<bits/stdc++.h>
+/*  
+    * Contest: 
+    * URL: 
+    * Problem: 
+    * Topic: 
+    * Algorithm: 
+    * Complexity: 
+    * Status: 
+    * angelmanuelgl
+*/
+#include<bits/stdc++.h>
 using namespace std;
 
 // --- --- --- --- Type Aliases --- --- --- ---
@@ -51,11 +61,11 @@ void logger(const char* col, string vars, Args&&... values){
 
 // --- --- --- --- DEBUGGER SETUP --- --- --- ---    
 #ifdef LOCAL
- #define DEBUG   if (true)
- #define SALTO   (cerr << '\n')  
- #define LOG(...)   logger("", #__VA_ARGS__, __VA_ARGS__)
- #define LOGC(c, ...) logger(c, #__VA_ARGS__, __VA_ARGS__)    
- #define COL(c, ...) (cerr << c << __VA_ARGS__ << RST << '\n')
+    #define DEBUG   if (true)
+    #define SALTO   (cerr << '\n')  
+    #define LOG(...)   logger("", #__VA_ARGS__, __VA_ARGS__)
+    #define LOGC(c, ...) logger(c, #__VA_ARGS__, __VA_ARGS__)    
+    #define COL(c, ...) (cerr << c << __VA_ARGS__ << RST << '\n')
 #else
     #define DEBUG   if (false) 
     #define SALTO
