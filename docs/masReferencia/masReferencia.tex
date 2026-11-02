@@ -1,0 +1,1208 @@
+%latexmk -pdf -shell-escape -interaction=nonstopmode masReferencia.tex
+% latexmk -pdf -shell-escape -halt-on-error Referencia_ICPC.tex
+\documentclass[8pt, spanish, mexico, letterpaper]{extarticle}
+\usepackage[T1]{fontenc}
+\input{preambulo.tex}
+
+\usepackage[spanish, es-tabla]{babel}
+\usepackage[table,xcdraw]{xcolor}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Prob}{\mathbb{P}}
+
+\newcommand{\rojo}[1]{\textcolor{red!80!black}{#1}}
+\newcommand{\naranja}[1]{\textcolor{orange!50!red!80!black}{#1}}
+\newcommand{\p}[2]{#1 \times 10^{#2}}
+
+\newcommand{\<}{<}
+% ---------- macros ----------
+\newcommand{\sect}[1]{\medskip{\large\textbf{$\blacktriangleright$ #1}}\par\nopagebreak\smallskip}
+\newcommand{\ov}[1]{\overline{#1}}
+\newcommand{\sd}{\mathbin{\triangle}}
+\newcommand{\Pw}{\mathcal{P}}
+\newcommand{\ind}[1]{\mathbf{1}_{#1}}
+\newcommand{\card}[1]{\left|#1\right|}
+\newcommand{\bor}{\texttt{|}}
+\newcommand{\band}{\texttt{\&}}
+\DeclareMathOperator{\rad}{rad}
+\DeclareMathOperator{\popcount}{popcount}
+
+\begin{document}
+\begin{multicols*}{3}
+\raggedcolumns
+
+\setlist[description]{
+    % style=multiline,      % Mantiene un buen alineamiento si las etiquetas son largas
+    leftmargin=02mm,     % Sangría uniforme para la descripción
+    % labelwidth=0.0cm,     % Espacio reservado para el término (etiqueta)
+    labelsep=01mm,       % Espacio entre el término y el texto
+    itemsep=2pt,          % Espacio vertical entre ítems
+    parsep=0pt,           % Espacio adicional entre párrafos dentro de un ítem
+    topsep=0pt            % Espacio antes y después de toda la lista
+}
+
+\section{Plantilla y entorno}
+
+\begin{minted}{cpp}
+#include<bits/stdc++.h>
+using namespace std;
+// --- --- --- --- Type Aliases --- --- --- ---
+typedef int64_t ll;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef vector<int> vi;
+typedef vector<ll> vll;
+typedef vector<vi> vvi;
+typedef vector<vll> vvll;
+typedef vector<pii> vpii;
+typedef vector<pll> vpll;
+// --- --- --- --- Short Macros --- --- --- ---
+#define fi first
+#define se second
+#define pb push_back
+#define all(x) (x).begin(), (x).end()
+#define sz(x) (int)(x).size()
+#define rep(i,a,b) for( int i=a; i< (b); ++i )
+const int MOD = 1e9 + 7;
+// --- --- --- --- LOGGER SETUP --- --- --- ---    
+template<typename C, typename T = typename enable_if<!is_same<C, string>::value, typename C::value_type>::type>
+ostream& operator<<(ostream &os, const C &v);
+// Overload for std::pair
+template<typename A, typename B>
+ostream& operator<<(ostream &os, const pair<A, B> &p) {
+    return os << '(' << p.fi << ", " << p.se << ')';
+}
+// Overload for Containers (excluding std::string) SFINAE
+template<typename C, typename T>
+ostream& operator<<(ostream &os, const C &v) {
+    string sep;
+    for(const T &x : v) os << sep << x, sep = " ";
+    return os;
+}
+// colores
+constexpr const char *RST="\033[0m", *GREEN="\033[1;32m", 
+*YELLOW="\033[1;33m",*CYAN="\033[1;36m",*RED="\033[1;31m";
+// Logger Function
+template<typename ...Args>
+void logger(const char* col, string vars, Args&&... values){
+    cerr << col << '[' << vars << "] =" << RST;
+    ((cerr << " [" << values << ']'), ...);
+    cerr << '\n';
+}
+// --- --- --- --- DEBUGGER SETUP --- --- --- ---    
+#ifdef LOCAL
+  #define DEBUG   if (true)
+  #define SALTO   (cerr << '\n')  
+  #define LOG(...)   logger("", #__VA_ARGS__, __VA_ARGS__)
+  #define LOGC(c, ...) logger(c, #__VA_ARGS__, __VA_ARGS__)    
+  #define COL(c, ...) (cerr << c << __VA_ARGS__ << RST << '\n')
+#else
+    #define DEBUG   if (false)]
+    #define SALTO
+    #define LOG(...)
+    #define LOGC(...)
+    #define COL(...)
+#endif
+// // // // // // // // // // // // // // // // // // // // //
+int main(){
+    #ifdef LOCAL
+        ifstream cin("in.in");
+    #else
+        ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+    #endif 
+}
+\end{minted}
+
+
+En el archivo \texttt{\textasciitilde/.bashrc} (o \texttt{\textasciitilde/.zshrc} para macOS) escribir:
+\begin{minted}{cpp}
+alias gc='g++ -std=c++17 -O3 -Wall -Wextra -DLOCAL'
+alias g='g++ -std=c++17 -O3 -Wall -Wextra'
+\end{minted}
+y refrescar \texttt{source ~/.zshrc}
+
+
+\columnbreak
+\subsection{Memoria disponible}
+
+\begin{minted}{cpp} 
+-Wl,-stack_size,0x8000000 // 128 MB  // 0x10000000 // 256 MB
+-Wl,-stack_size,0x20000000 // 512 MB // 0x40000000 // 1 GB 
+ulimit -s                 ulimit -s 524288 // 512MB 
+ulimit -s unlimited       ulimit -s 1048576 // 1gb
+\end{minted}
+
+
+
+\section{Informacion adicional}
+
+\subsection*{Constantes y más}
+
+\subsubsection*{Límites de tipos}
+\begin{tabular}{ll}
+\texttt{INT\_MAX} & \(2{,}147{,}483{,}647 = 2^{31}-1 \approx 2.1\times10^{9}\)\\
+\texttt{INT\_MIN} & \(-2^{31} = -2{,}147{,}483{,}648\)\\
+\texttt{UINT\_MAX} & \(4{,}294{,}967{,}295 = 2^{32}-1 \approx 4.29\times10^{9}\)\\
+\texttt{LLONG\_MAX} & \(9{,}223{,}372{,}036{,}854{,}775{,}807 = 2^{63}-1 \approx 9.22\times10^{18}\)\\
+\texttt{LLONG\_MIN} & \(-2^{63}\)\\
+\texttt{ULLONG\_MAX} & \(2^{64}-1 = 18{,}446{,}744{,}073{,}709{,}551{,}615 \approx 1.84\times10^{19}\)\\
+\texttt{double} & enteros exactos hasta \(2^{53} \approx 9.007\times10^{15}\)\\
+\end{tabular}
+
+\subsubsection*{Valores de INF recomendados}
+\texttt{int}: \(\texttt{INF}=10^9\) (o \texttt{0x3f3f3f3f} $\approx 1.06\times10^9$, permite $\texttt{INF}+\texttt{INF}$ sin overflow). \\
+\texttt{long long}: \(\texttt{INF}=10^{18}\) (o \texttt{4e18}; ojo con sumar dos INF).
+
+\subsubsection*{Potencias de 2}
+\begin{tabular}{rl|rl|rl}
+\(2^{10}\) & 1,024 & \(2^{19}\) & 524,288 & \(2^{37}\) & \(\approx 1.37\times10^{11}\) \\
+\(2^{11}\) & 2,048 & \(2^{20}\) & 1,048,576 & \(2^{40}\) & \(\approx 1.10\times10^{12}\) \\
+\(2^{12}\) & 4,096 & \(2^{22}\) & 4,194,304 & \(2^{45}\) & \(\approx 3.52\times10^{13}\) \\
+\(2^{13}\) & 8,192 & \(2^{25}\) & 33,554,432 & \(2^{50}\) & \(\approx 1.13\times10^{15}\) \\
+\(2^{14}\) & 16,384 & \(2^{27}\) & 134,217,728 & \(2^{60}\) & \(\approx 1.15\times10^{18}\) \\
+\(2^{15}\) & 32,768 & \(2^{30}\) & \(\approx 1.07\times10^9\) & \(2^{63}\) & \(\approx 9.22\times10^{18}\) \\
+\(2^{16}\) & 65,536 & \(2^{31}\) & \(\approx 2.15\times10^9\) & \(2^{64}\) & \(\approx 1.84\times10^{19}\) \\
+\(2^{17}\) & 131,072 & \(2^{32}\) & \(\approx 4.29\times10^9\) & \(2^{127}\) & \(\approx 1.70\times10^{38}\) \\
+\(2^{18}\) & 262,144 & \(2^{35}\) & \(\approx 3.44\times10^{10}\) & \(2^{128}\) & \(\approx 3.40\times10^{38}\) \\
+\end{tabular}
+
+\subsubsection*{ASCII}
+\texttt{'0'}=48, \texttt{'A'}=65, \texttt{'a'}=97 \quad (\texttt{'a'-'A'}=32, es decir, el bit 5).
+\subsubsection*{Constantes reales}
+\(\pi \approx 3.14159265358979\),  \(e \approx 2.71828182845905\), \(\sqrt2 \approx 1.41421356237\) \\
+\(\varphi=\frac{1+\sqrt5}{2}\approx 1.6180339887\), \  \(\ln2\approx0.693147\), \quad \(\gamma\approx0.5772156649\). \\
+\texttt{acos(-1)} da $\pi$ con precisión de \texttt{double}.
+
+\subsubsection*{Complejidad según $n$ (límite $\approx 10^8$ ops simples/s)}
+\begin{tabular}{ll|ll}
+    $n \le 10$ & \(O(n!)\) & $n \le 5{,}000$ & \(O(n^2)\) \\
+    $n \le 20$--$25$ & \(O(2^n\cdot n)\) & $n \le 10^5$--$2\times10^5$ & \(O(n\log n)\) \\
+    $n \le 100$ & \(O(n^4)\) & $n \le 10^6$--$10^7$ & \(O(n)\) \\
+    $n \le 500$ & \(O(n^3)\) & $n \le 10^{18}$ & \(O(\log n)\) o \(O(1)\) \\
+\end{tabular}
+
+\subsubsection*{Factoriales y Fibonacci (máximo que cabe)}
+\(12! = 479{,}001{,}600\) es el mayor en \texttt{int}; \(13!>\texttt{INT\_MAX}\).\\
+\(20! = 2{,}432{,}902{,}008{,}176{,}640{,}000\) es el mayor en \texttt{long long}.\\
+\(F_{46} = 1{,}836{,}311{,}903\) mayor en \texttt{int};\\
+\(F_{92}=7{,}540{,}113{,}804{,}746{,}346{,}429\) mayor en \texttt{long long}.\\
+\(10! = 3{,}628{,}800\), \\
+Catalan:  \(C_{15}=9{,}694{,}845\), \(C_{19}=1{,}767{,}263{,}190\) (mayor en \texttt{int}).
+
+
+\subsubsection*{Máximo número de divisores}
+$n\le10^6$: 240 ($720720$) \quad $n\le 10^9$: 1344 ($735134400$) \quad $n\le10^{18}$: 103,680 ($897612484786617600$).
+
+\subsubsection*{Primos y módulos comunes}
+\(10^9+7\), \quad \(998{,}244{,}353 = 119\cdot2^{23}+1\) (NTT), \quad \(10^9+9\).
+
+
+\subsubsection*{Cantidades de primos $\le n$:}
+\begin{center}
+
+\begin{tabular}{cc | cc }
+$n$ & $\pi(n)$ & $n$ & $\pi(n)$ \\ \hline
+$10^2$ & 25 & $10^9$ & 50,847,534  \\
+$10^3$ & 168 & $10^{10}$ & 455,052,511  \\
+$10^4$ & 1,229 & $10^{11}$ & 4,118,054,813 \\
+$10^5$ & 9,592 & $10^{12}$ & 37,607,912,018  \\
+$10^6$ & 78,498 & $10^{13}$ & 346,065,536,839  \\
+$10^7$ & 664,579 & $10^{14}$ & 3,204,941,750,802  \\
+$10^8$ & 5,761,455 & $10^{15}$ & 29,844,570,422,669  
+\end{tabular}
+\end{center}
+
+
+
+
+
+
+
+
+\subsection*{Equivalencias}
+En general, para enteros \textbf{positivos} \texttt{int a,b,x} (o \texttt{long long}):
+$$ \texttt{if( a*b > x )} \equiv \texttt{if( a > x / b )}$$
+\textbf{Con \texttt{>=}} $\texttt{if( a*b >= x )}\equiv$
+$$ \texttt{if(a >= (x + b - 1) / b)}
+    \equiv \texttt{if(a > (x - 1) / b)} $$
+
+\subsubsection*{Aritmética entera}
+\begin{itemize}
+  \item Techo (positivos): con $a\ge1$
+  $$ \lceil a/b\rceil = \texttt{(a + b - 1) / b} = \texttt{(a - 1) / b + 1}$$ 
+  \item Módulo no negativo: \texttt{((a \% m) + m) \% m}. En C++ \texttt{-7 / 2 = -3} (trunca hacia 0) y \texttt{-7 \% 2 = -1}.
+  \item Resta modular: \texttt{(a - b + m) \% m}. 
+  \item Inverso modular ($m$ primo): \(a^{-1}\equiv a^{m-2}\pmod m\).
+  \item \texttt{lcm(a,b) = a / gcd(a,b) * b} (div evitar overflow).
+  \item Overflow de suma: \texttt{a + b > MAX} $\equiv$ \texttt{a > MAX - b}.
+  \item Overflow de producto: equiv previa o \texttt{\_\_int128}.
+  \item \texttt{(a + b) / 2} puede desbordar; usar \texttt{a + (b - a) / 2}.
+\end{itemize}
+
+
+\subsection*{Memoria}
+
+\paragraph{Unidades.}
+\(1\,\text{KB} = 2^{10} \) B, \quad \(1\,\text{MB} = 2^{20} =\) B, \quad \(1\,\text{GB} = 2^{30}\) B.\\
+\textbf{Aprox:} \(1\,\text{MB} \approx 10^{6}\) B 
+$2^{18}$ ints $=1$ MB, \  $2^{20}$ ints $=4$ MB.
+
+
+\textbf{Tamaño de tipos (x86-64, GCC).} \\
+\begin{tabular}{ll|ll}
+\texttt{char}, \texttt{bool} & 1 B & \texttt{long long}, \texttt{double} & 8 B \\
+\texttt{short} & 2 B & \texttt{long double}, \texttt{\_\_int128} & 16 B \\
+\texttt{int}, \texttt{float} & 4 B & puntero (\texttt{int*}) & 8 B \\
+\texttt{pair<int,int>} & 8 B & \texttt{pair<ll,ll>} & 16 B \\
+\texttt{array<int,3>} & 12 B & \texttt{array<ll,3>} & 24 B 
+\end{tabular}
+\textbf{Aprox:} En la práctica con 256 MB: $\approx 5\times10^{7}$ ints o $\approx 2.5\times10^{7}$ long long.\\
+\textbf{De $n$ elementos a MB.}\\
+\begin{tabular}{r|rrrr}
+$n$ & 1 B (\texttt{char}) & 4 B (\texttt{int}) & 8 B (\texttt{ll}) & 16 B \\ \hline
+$10^5$ & 0.1 MB & 0.4 MB & 0.8 MB & 1.5 MB \\
+$10^6$ & 0.95 MB & 3.8 MB & 7.6 MB & 15.3 MB \\
+$10^7$ & 9.5 MB & 38.1 MB & 76.3 MB & 152.6 MB \\
+$10^8$ & 95.4 MB & 381.5 MB & 762.9 MB & 1,526 MB 
+\end{tabular}
+
+
+\textbf{De MB a $n$ elementos.}\\
+\begin{tabular}{r|rrrr}
+Límite & \texttt{char} (1 B) & \texttt{int} (4 B) & \texttt{ll} (8 B) & 16 B \\ \hline
+64 MB  & $6.7\times10^{7}$ & $1.68\times10^{7}$ & $8.4\times10^{6}$ & $4.2\times10^{6}$ \\
+128 MB & $1.34\times10^{8}$ & $3.36\times10^{7}$ & $1.68\times10^{7}$ & $8.4\times10^{6}$ \\
+256 MB & $2.68\times10^{8}$ & $6.71\times10^{7}$ & $3.36\times10^{7}$ & $1.68\times10^{7}$ \\
+512 MB & $5.37\times10^{8}$ & $1.34\times10^{8}$ & $6.71\times10^{7}$ & $3.36\times10^{7}$ \\
+1024 MB & $1.07\times10^{9}$ & $2.68\times10^{8}$ & $1.34\times10^{8}$ & $6.71\times10^{7}$ \\
+\end{tabular}\\
+
+
+
+% \paragraph{Bitset y criba.}
+% \texttt{bitset<N>} usa $N/8$ bytes: \(10^8\) bits $= 12.5$ MB, \(10^9\) bits $\approx 119$ MB.\\
+% Criba de Eratóstenes: \texttt{bool} hasta $10^7$ $\approx 9.5$ MB, hasta $10^8$ $\approx 95$ MB; con \texttt{bitset} hasta $10^9$ $\approx 119$ MB.
+
+% \paragraph{Estructuras con tamaño típico.}
+% \begin{itemize}
+%   \item \texttt{vector<int>} de $n$ elementos: $4n$ B + 24 B de cabecera. Al crecer con \texttt{push\_back} la capacidad se duplica, así que el pico puede ser $\approx 2\times$ (usar \texttt{reserve} si se conoce $n$).
+%   \item \texttt{vector<vector<int>>} (grafo): 24 B por vértice + 4 B por cada extremo de arista. Para $m$ aristas no dirigidas: $\approx 8m$ B de datos.
+%   \item Lista de aristas \texttt{(u,v,w)} de \texttt{int}: 12 B por arista. Con $m=2\times10^5$ son $\approx 2.3$ MB.
+%   \item Árbol de segmentos de tamaño $4n$: \(n=10^5\): 1.5 MB (\texttt{int}) / 3.1 MB (\texttt{ll}); \quad \(n=10^6\): 15.3 MB / 30.5 MB.
+%   \item Fenwick / prefijos: $n$ elementos, igual que un arreglo normal.
+%   \item Tabla sparse: $n\log_2 n$ elementos. \(n=10^5\): $\approx 17\times10^5$ ints $=6.5$ MB; \quad \(n=10^6\): $\approx 20\times10^6$ ints $=76$ MB.
+%   \item \texttt{set<int>} / \texttt{map<int,int>}: $\approx 40$--$48$ B por elemento (nodo + punteros). $10^6$ elementos $\approx 45$ MB. Mucho más que un arreglo.
+%   \item \texttt{unordered\_map}: $\approx 32$--$40$ B por elemento más la tabla de buckets.
+%   \item \texttt{string}: 32 B de objeto (los strings cortos caben dentro); un string largo ocupa su longitud + 32 B.
+% \end{itemize}
+
+% \paragraph{Stack y recursión.}
+% Cada llamada recursiva gasta $\approx 32$--$100$ B. Una DFS de profundidad $10^6$ puede usar $\approx 50$--$100$ MB de stack. En Codeforces el stack es grande, pero en otros jueces (o con el valor por defecto de Linux, 8 MB) puede dar \emph{stack overflow}. Para profundidades de $10^5$--$10^6$ conviene una versión iterativa.
+
+% \paragraph{Reglas rápidas.}
+% \begin{itemize}
+%   \item Arreglo global de $10^6$ \texttt{int} $\approx 4$ MB: no hay problema.
+%   \item Contar siempre \emph{todos} los arreglos: 20 arreglos de $10^6$ \texttt{ll} son 160 MB.
+%   \item Si $n\cdot s$ pasa el límite, pensar en \texttt{bitset}, \texttt{short}/\texttt{char}, comprimir coordenadas, o DP con filas rodantes.
+%   \item Los arreglos globales no usan stack; los locales grandes (\texttt{int a[10000000]} dentro de \texttt{main}) sí pueden reventarlo.
+%   \item Un \texttt{Memory Limit Exceeded} con pocos datos suele indicar un \texttt{vector} que crece sin control o un \texttt{map} muy grande.
+% \end{itemize}
+
+
+
+%%%%%%
+\columnbreak
+
+\section{Ideas  < - < - < - }
+
+\subsection{DP}
+\begin{description}
+\item[Elegir el estado]
+   No siempre pienses en prefijos $[0,i]$; considera también sufijos.
+    \begin{itemize}
+      \item $dp[i][\dots]$ = es posible sobrevivir las primeras $i$ horas, $[1,i]$.
+      \item $dp[i][\dots]$ = es posible sobrevivir desde el fin de la hora $i$ hasta el final, $(i,n+1]$.
+    \end{itemize}
+
+
+\item[Transiciones sobre el último elemento]
+  Revisar si ...
+  \begin{itemize}
+    \item se usa el último elemento o no.
+    \item se usa el último elemento un número par o impar de veces.
+  \end{itemize}
+
+\item[Distinguir entre dos formulaciones]
+  $dp[\dots][i]$ :
+  \begin{itemize}
+    \item $dp[\dots][i]$ = ya completé los primeros $i$ elementos.
+    \item $dp[\dots][i]$ = el $i$-ésimo elemento queda completado/terminado.
+  \end{itemize}
+
+\item[Probar quien es el ultimo elemento]
+  Si $n \le 20$ y el orden importa, la transición desde $dp[mask]$ decide qué elemento se agrega \emph{al final}.
+\end{description}
+
+
+\subsection{Búsqueda binaria}
+\begin{description}
+\item[Búsqueda binaria sobre la respuesta]
+  Lograr $S$ en a lo sumo $K$ pasos: binaria sobre $S$. Para $S$ fijo, calcular $f(S)$, la cantidad mínima de pasos para obtener $S$, y buscar $\max\{S : f(S) \le K\}$.
+  \textbf{Requisito:} $f$ debe ser monótona (si se puede lograr $S$, se puede lograr cualquier $S' < S$).
+\end{description}
+
+\subsection{Ideas más generales}
+\begin{description}
+    \item[Ciclos] Avanzar un paso a la vez, no varios.
+    \item[Local] Pasar de condiciones locales a condiciones globales.
+    \item[Independencia]  (no probabilística): decisiones o eventos que no se afectan entre sí, por ejemplo poner G y T.
+    \item[Bases o generadores:]  \textcolor{white}{.}
+      \begin{itemize}
+        \item una base $B$ de un espacio vectorial;
+        \item los generadores de una $\sigma$-álgebra, $\sigma(\mathcal{C})$.
+      \end{itemize}
+    \item[Informacion] En el estado actual, ¿qué información se puede olvidar y cuál es necesario conservar para resolver el problema?
+\end{description}
+
+\subsection{Ideas especificas}
+\begin{description}
+    \item[No buscar todo] Los problemas ``\textbf{South America} 2025 - Brazil First Phase \textbf{K} - Knockout'' y ``(\textbf{NWERC} 2025) \textbf{D} Dreamcatcher'' mostraron que no hace falta probar toda la fuerza bruta si no algunos ``lugares cercanos a donde parece que debería estar el maximo''. En lugar de probar $O(N)$ probar una \textbf{cierta cantidad}, o empezar a probar \textbf{desde ``el lugar donde este el maximo'' }
+\end{description}
+
+\section{Observaciones al implementar}
+\begin{description}
+  \item[Productos en \texttt{int}] Castea \emph{antes} de multiplicar: \texttt{(ll)(i-1)*i/2}. Castear el resultado ya no sirve.
+  \item[Saturación] Si un valor se acota a \texttt{INF}, trátalo como ``$\geq$ INF'', nunca como 0. Guarda el valor saturado \emph{antes} de cualquier \texttt{break}.
+  \item[Cortes en DP] Cortar el cálculo solo es válido si lo que no se calcula nunca se lee después. Verifica que los índices leídos siempre queden dentro del rango calculado.
+  \item[Restas con saturación] Una resta sobre valores saturados es inexacta. Asegura que el sustraendo siempre sea exacto, o usa \texttt{\_\_int128} para los intermedios.
+  \item[Intermedios anchos] Calcula en \texttt{\_\_int128} y satura al guardar. La suma de dos valores $\leq 4\cdot10^{18}$ cabe en \texttt{ll}, pero una suma con resta intermedia puede no caber.
+  \item[Monotonía como test] Si sabes que una cantidad es monótona, ponle un \texttt{assert}. Un salto raro suele indicar un bug de truncamiento y no de overflow.
+  \item[Depuración] Imprime en puntos de transición (donde cambia el comportamiento) y no en intervalos regulares.
+  \item[Memoria] Si la recurrencia solo usa la fila anterior, usa dos filas. Una tabla de \texttt{ll} de $2\cdot10^5\times196$ pesa unos 313 MB.
+\end{description}
+
+
+\section{Cosas triviales a tomar en cuenta}
+\subsection*{  ¿Qué hacer si da \textbf{\rojo{WA} (\rojo Wrong \rojo Answer)}? }
+\begin{itemize}
+    \item Revisar que se esta impriminedo. Otros couts, formato.
+    \item Quitar \texttt{ifstream cin(``in.txt'');} y revisar \texttt{DEBUG}
+    \item \textbf{Revisar Overflow:} revisar los tipos de datos (\texttt{int}, \texttt{int64\_t}).
+    \item \textbf{Revisar línea a línea:} asegúrate de que cada linea si este correcta, por ejemplo \texttt{fact[n]} y no solo \texttt{n}.
+    \item \textbf{Casos extremos:} prueba con casos límites, como $N = 1$, o valores muy grandes.
+    \item  Los \text{for}s estan bien: no se sale o empieza antes. Por ejemplo en divisibildiad y primos tener cuidado si se inicia en \texttt{i=1} en lugar de \texttt{i=2}
+    \item  Revisar los limites del problema y los limites que se pusieron en el codigo tipo \texttt{MAXN= }, \texttt{r= }, etc.
+    \item  Revisar como llenas la dp, o como llenas arreglos, sobretodo si es inplace, no es lo mismo $0\to n$ que $n\to 0$.
+    \item  ... 
+\end{itemize}
+
+\subsection*{¿Qué hacer si da \textbf{\naranja{RT} (\naranja Runtime  \naranja error)}?}
+\begin{itemize}
+    \item  Declarar arreglos fuera del main.
+    \item  Si usas modulos, ojo con las restas aunque creas que da postivio. $A>B$ \textbf{NO} implica $(A \mod m )> (B \mod m)$.
+    \item  ... 
+\end{itemize}
+
+
+\subsection*{¿Qué hacer si da \textbf{\naranja{TLE} (\naranja Time \naranja Limit \naranja Excede)}? }
+\begin{itemize}
+    \item Quitar el Print Debugger 
+    \item   Revisar que si este usando
+    \begin{minted}{cpp}
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    \end{minted}
+    \item Ver que nada se esta ciclando
+    \item 
+\end{itemize}
+
+
+\subsection*{¿Qué hacer si da \textbf{\naranja{MLE} (\naranja Memory   \naranja Limit \naranja  Exceeded) }? }
+Para medir el consumo pico de memoria RAM
+\begin{minted}{bash}
+g++ -O3 j.cpp -o j
+/usr/bin/time -v ./j < jenga.in
+\end{minted}
+
+En la salida generada, busca la línea:
+\begin{center}
+\texttt{Maximum resident set size (kbytes): [valor]}
+\end{center}
+Divide el valor obtenido entre $1024$ para convertirlo a megabytes (MB) y compararlo con el límite del problema.
+
+\subsection*{Memoria}
+
+\begin{description}
+    \item[\texttt{T arr[N]}] $N \times \text{sz(T)}$ -- La más eficiente (contigua).
+    \item[\texttt{vector<T>}] $N \times \text{sz(T)}$ -- +32 bytes de overhead del objeto.
+    \item[\texttt{vector<bool>}] $\approx N / 8$ bytes -- Optimizado (1 bit por elemento).
+    \item[\texttt{bitset<N>}] $\approx N / 8$ bytes -- Estático, el más ligero de todos.
+    \item[\texttt{set<T>}] $\approx 48N$ bytes -- Árbol: 3 punteros + color + dato + padding.
+    \item[\texttt{map<K, V>}] $\approx 48N$ bytes -- Similar al set, guarda pares \texttt{std::pair}.
+    \item[\texttt{unordered\_set<T>}] $\approx 32N$ bytes (Tabla Hash: ptr por nodo + overhead de buckets)
+    \item[\texttt{list<T>}] $\approx 24N + \text{sz(T)} \times N$ -- List doblement enlazada (2 punteros).
+    \item[\texttt{deque<T>}] $\approx N \times \text{sz(T)}$(Fragment en bloques,más pesada que vector)
+    \item[\texttt{priority\_queue<T>}] $N \times \text{sz(T)}$ -- Usa un \texttt{vector} por debajo (Heap).
+    \item[\texttt{set<T>}] $32 \text{ a } 48 \text{ bytes} + \text{sz(T)}$ (Memoria por nodo, aprox. 64-bit).
+    \item[\texttt{map<K, V>}] $32 \text{ a } 48 \text{ bytes} + \text{sz(K)} + \text{sz(V)}$ 
+    \item[\texttt{unordered\_set<T>}] $24 \text{ a } 32 \text{ bytes} + \text{sz(T)}$ 
+\end{description}
+
+
+\section{Sobrecargar}
+\begin{minted}{cpp}
+struct T {
+    ll a, b;
+    // ctor por defecto + parametros
+    T(ll a_ = 0, ll b_ = 0) : a(a_), b(b_) {}          
+    //  compuestos: miembro, modifican *this y devuelven T& 
+    T& operator+=(const T& o) 
+        { a += o.a; b += o.b; return *this; }
+    T& operator-=(const T& o) 
+        { a -= o.a; b -= o.b; return *this; }
+    T& operator*=(ll k)  { a *= k;   b *= k;   return *this; }
+    // --- binarios: friend, copia por valor + compuesto ---
+    friend T operator+(T x, const T& y) { return x += y; }
+    friend T operator-(T x, const T& y) { return x -= y; }
+    friend T operator*(T x, ll k)       { return x *= k; }
+    // k*x conmutado
+    friend T operator*(ll k, T x)       { return x *= k; }  
+    // unario
+    T operator-() const { return T(-a, -b); }   
+    // ++t  (prefijo, devuelve referencia)
+    T& operator++()    { ++a; ++b; return *this; }   
+    // t++ (postfijo, devuelve la copia vieja)
+    T  operator++(int) { T r = *this; ++*this; return r; } 
+    //  comparacion (set, map, sort, priority_queue usan < ) 
+    bool operator<(const T& o) const 
+        { return tie(a, b) < tie(o.a, o.b); }
+    bool operator==(const T& o) const 
+        { return a == o.a && b == o.b; }
+    bool operator!=(const T& o) const 
+        { return !(*this == o); }
+    // C++20: reemplaza los 3 anteriores (y >, <=, >=) con:
+    auto operator<=>(const T& o) const 
+        { return tie(b, a) <=> tie(o.b, o.a); }
+    bool operator==(const T& o) const = default;   
+    // --- otros utiles ---
+    // t(x) como funcion
+    ll operator()(ll x) const { return a * x + b; }         
+    // t[0], t[1]
+    ll& operator[](int i) { return i ? b : a; }             
+    // if(t)
+    explicit operator bool() const { return a || b; }       
+    // --- I/O: free functions, NO miembros ---
+    friend ostream& operator<<(ostream& os, const T& t) 
+        { return os << t.a << ' ' << t.b; }
+    friend istream& operator>>(istream& is, T& t)       
+        { return is >> t.a >> t.b; }
+};
+// hash para unordered_map/set 
+// (fuera del struct, requiere operator==)
+template<> struct std::hash<T> {
+    size_t operator()(const T& t) const { 
+        return hash<ll>()(t.a * 1000003 ^ t.b); 
+    }
+};
+\end{minted}
+
+
+
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+\clearpage
+\section{Teoría de Conjuntos}
+
+Universo $U$, complemento $\ov{A}=U\setminus A$, diferencia sim\'etrica
+$A\sd B=(A\setminus B)\cup(B\setminus A)$ (es el $\oplus$ de la hoja de l\'ogica).
+Toda identidad se prueba \emph{elemento por elemento} o con indicadores (\S2).
+ 
+% =====================================================
+\subsection{Diccionario conjuntos -- l\'ogica -- bitwise}
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\hline
+Conjuntos & L\'ogica ($x\in\cdot$) & M\'ascara \\
+\hline
+$A\cup B$ & $p\lor q$ & \texttt{a\bor b} \\
+$A\cap B$ & $p\land q$ & \texttt{a\band b} \\
+$\ov A$ & $\lnot p$ & \texttt{\textasciitilde a \band{} full} \\
+$A\setminus B$ & $p\land\lnot q$ & \texttt{a \band{} \textasciitilde b} \\
+$A\sd B$ & $p\oplus q$ & \texttt{a\textasciicircum b} \\
+$A\subseteq B$ & $p\Rightarrow q$ & \texttt{(a\band b)==a} \\
+$\card{A}$ & --- & \texttt{popcount(a)} \\
+\hline
+\end{tabular}
+\end{center}
+ 
+% =====================================================
+\subsection{\'Algebra de Boole de $\Pw(U)$}
+\begin{itemize}
+  \item $A\cup A=A\cap A=A$ \quad (idempotencia); conmutatividad y asociatividad de $\cup,\cap,\sd$.
+  \item $A\cup\varnothing=A$, \; $A\cap U=A$, \; $A\cup U=U$, \; $A\cap\varnothing=\varnothing$.
+  \item Absorci\'on: $A\cup(A\cap B)=A$, \quad $A\cap(A\cup B)=A$.
+  \item Complemento: $A\cup\ov A=U$, \; $A\cap\ov A=\varnothing$, \; $\ov{\ov A}=A$.
+  \item $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$.
+  \item $A\cup(B\cap C)=(A\cup B)\cap(A\cup C)$.
+  \item De Morgan: $\ov{A\cup B}=\ov A\cap\ov B$, \quad $\ov{A\cap B}=\ov A\cup\ov B$.
+  \item $A\subseteq B \iff A\cup B=B \iff A\cap B=A \iff A\setminus B=\varnothing \iff \ov B\subseteq\ov A$.
+\end{itemize}
+ 
+Diferencia:
+\begin{itemize}
+  \item $A\setminus B=A\cap\ov B=A\setminus(A\cap B)$.
+  \item $(A\setminus B)\setminus C=A\setminus(B\cup C)$.
+  \item $A\setminus(B\setminus C)=(A\setminus B)\cup(A\cap C)$.
+  \item $A\setminus(B\cup C)=(A\setminus B)\cap(A\setminus C)$.
+  \item $A\setminus(B\cap C)=(A\setminus B)\cup(A\setminus C)$.
+  \item $(A\cup B)\setminus C=(A\setminus C)\cup(B\setminus C)$.
+  \item $A\cap(B\setminus C)=(A\cap B)\setminus C$.
+\end{itemize}
+
+ 
+% =====================================================
+\subsection{Diferencia sim\'etrica}
+\begin{itemize}
+  \item $A\sd B=(A\cup B)\setminus(A\cap B)$.
+  \item $A\sd\varnothing=A$, \; $A\sd A=\varnothing$; por tanto $A\sd B=C\iff A=B\sd C$.
+  \item $A\cup B=(A\sd B)\sqcup(A\cap B)$ \quad 
+  \item $A\sd(A\cap B)=A\setminus B=(A\cup B)\sd B$  
+  \item $(A\cap B)\sd(A\cup B)=A\sd B$ 
+  \item $\ov A\sd\ov B=A\sd B$, \quad $\ov{A\sd B}=\ov A\sd B$.
+  \item $\cap$ distribuye sobre $\sd$: $A\cap(B\sd C)=(A\cap B)\sd(A\cap C)$
+  \item $(\Pw(U),\sd,\cap)$ es un anillo booleano.
+  \item $\cup$ \textbf{no} distribuye sobre $\sd$. Contraejemplo: $A=\{1\}$, $B=C=\{2\}$:
+        $A\cup(B\sd C)=\{1\}$ pero $(A\cup B)\sd(A\cup C)=\varnothing$.
+  \item $\card{A\sd C}\le\card{A\sd B}+\card{B\sd C}$ 
+  \item distancia de Hamming: $\card{A\sd B}=\popcount(a\oplus b)$)
+  \item $\bigtriangleup_{i=1}^n A_i=\{x:\ x \text{ est\'a en un n\'umero impar de los } A_i\}$.
+\end{itemize}
+ 
+% =====================================================
+\subsection{Indicadores y cardinalidades}
+Con $\ind{A}(x)\in\{0,1\}$ y $\card A=\sum_x\ind A(x)$:
+\begin{itemize}
+  \item $\ind{A\cap B}=\ind A\,\ind B$, \quad $\ind{\ov A}=1-\ind A$.
+  \item $\ind{A\cup B}=\ind A+\ind B-\ind A\,\ind B$.
+  \item $\ind{A\sd B}=\ind A+\ind B-2\,\ind A\,\ind B\equiv\ind A+\ind B\pmod 2$.
+  \item $\card A+\card B=\card{A\cup B}+\card{A\cap B}$ \ (an\'alogo $a+b=a\bor b+a\band b$).
+  \item $\card{A\sd B}=\card A+\card B-2\card{A\cap B}$ \  (an\'alogo  $a+b=a\oplus b+2(a\band b)$).
+  \item $\card{A\setminus B}=\card A-\card{A\cap B}$.
+  \item $\max(\card A,\card B)\le\card{A\cup B}\le\card A+\card B$.
+  \item $\card{A\cap B}\ge\card A+\card B-\card U$.
+\end{itemize}
+ 
+% =====================================================
+\subsection{Uniones e intersecciones generalizadas}
+\begin{itemize}
+  \item $\bigcup_{i\in I}A_i=\{x:\exists i\in I,\ x\in A_i\}$, 
+  \item $\bigcap_{i\in I}A_i=\{x\in U:\forall i\in I,\ x\in A_i\}$.
+  \item Convenci\'on: $\bigcup_{\varnothing}=\varnothing$, \; $\bigcap_{\varnothing}=U$ 
+  \item el $\exists$ sobre vac\'io es falso, el $\forall$ es verdadero.
+  \item De Morgan: $\ov{\bigcup_iA_i}=\bigcap_i\ov{A_i}$, \quad $\ov{\bigcap_iA_i}=\bigcup_i\ov{A_i}$ \quad ($\lnot\exists\equiv\forall\lnot$).
+  \item $B\cap\bigcup_iA_i=\bigcup_i(B\cap A_i)$, \quad $B\cup\bigcap_iA_i=\bigcap_i(B\cup A_i)$.
+  \item $B\setminus\bigcup_iA_i=\bigcap_i(B\setminus A_i)$, \quad $B\setminus\bigcap_iA_i=\bigcup_i(B\setminus A_i)$.
+  \item \textbf{Intersecci\'on de uniones:}
+        $$\Big(\bigcup_{i\in I}A_i\Big)\cap\Big(\bigcup_{j\in J}B_j\Big)=\bigcup_{(i,j)\in I\times J}(A_i\cap B_j)$$
+  \item \textbf{Uni\'on de intersecciones:}
+        $$\Big(\bigcap_{i\in I}A_i\Big)\cup\Big(\bigcap_{j\in J}B_j\Big)=\bigcap_{(i,j)\in I\times J}(A_i\cup B_j)$$
+  \item \textbf{No conmutan:}
+        $\bigcup_i\bigcap_jA_{ij}\subseteq\bigcap_j\bigcup_iA_{ij}$, y la inclusi\'on inversa es falsa.
+  \item \textbf{Disjuntificaci\'on:} con $B_i=A_i\setminus\bigcup_{j<i}A_j$ los $B_i$ son disjuntos dos a dos,
+        $B_i\subseteq A_i$ y $\bigcup_iA_i=\bigsqcup_iB_i$; luego $\card{\bigcup A_i}=\sum\card{B_i}$.
+  \item \textbf{Partici\'on:} si $\{P_k\}$ particiona $U$, $X=\bigsqcup_k(X\cap P_k)$ y $\card X=\sum_k\card{X\cap P_k}$.
+  \item \textbf{Subaditividad:} $\card{\bigcup_iA_i}\le\sum_i\card{A_i}$.  Igualdad ssi disjuntos dos a dos.
+  \item $\limsup A_n=\bigcap_n\bigcup_{k\ge n}A_k=\{x: x\in A_k\text{ para infinitos }k\}$.
+  \item $\liminf A_n=\bigcup_n\bigcap_{k\ge n}A_k=\{x: x\in A_k\ \forall k\text{ salvo finitos}\}$
+  \item $\liminf A_n\subseteq\limsup A_n$.
+\end{itemize}
+ 
+% =====================================================
+\subsection{Inclusi\'on--exclusi\'on}
+\begin{itemize}
+  \item $\Big|\bigcup_{i=1}^nA_i\Big|=\sum_{\varnothing\ne S\subseteq[n]}(-1)^{|S|+1}\Big|\bigcap_{i\in S}A_i\Big|$.
+  \item $\Big|U\setminus\bigcup_iA_i\Big|=\sum_{S\subseteq[n]}(-1)^{|S|}\Big|\bigcap_{i\in S}A_i\Big|$, con $\bigcap_\varnothing=U$.
+  \item Sobreyecciones $[n]\to[m]$: $\sum_{k=0}^m(-1)^k\binom mk(m-k)^n$.
+  \item Desarreglos: $D_n=\sum_{k=0}^n(-1)^k\,n!/k!$.
+  \item Coprimos con $m$ hasta $N$: $\sum_{d\mid\rad(m)}\mu(d)\lfloor N/d\rfloor$. Donde $$m=p_1^{e_1}\cdots p_r^{e_r}\ \Longrightarrow\ \operatorname{rad}(m)=p_1p_2\cdots p_r.$$
+\end{itemize}
+
+
+% =====================================================
+\subsection{Im\'agenes y preim\'agenes ($f:X\to Y$)}
+\begin{itemize}
+  \item $f^{-1}\big(\bigcup B_i\big)=\bigcup f^{-1}(B_i)$, \; $f^{-1}\big(\bigcap B_i\big)=\bigcap f^{-1}(B_i)$.
+  \item $f^{-1}(\ov B)=\ov{f^{-1}(B)}$, \quad $f^{-1}(B\setminus C)=f^{-1}(B)\setminus f^{-1}(C)$.
+  \item $f\big(\bigcup A_i\big)=\bigcup f(A_i)$.
+  \item $f\big(\bigcap A_i\big)\subseteq\bigcap f(A_i)$.
+  \item $f(A\setminus B)\supseteq f(A)\setminus f(B)$, con igualdad si $f$ es inyectiva.
+  \item $f(f^{-1}(B))=B\cap f(X)$, \quad $f^{-1}(f(A))\supseteq A$.
+\end{itemize}
+ 
+
+
+ % =====================================================
+\subsection{Producto cartesiano y conjunto potencia}
+\begin{itemize}
+  \item $(A\times B)\cap(C\times D)=(A\cap C)\times(B\cap D)$; \quad $\card{A\times B}=\card A\,\card B$.
+  \item $A\times(B\cup C)=(A\times B)\cup(A\times C)$, \quad $A\times(B\cap C)=(A\times B)\cap(A\times C)$.
+  \item $(A\times B)\cup(C\times D)\subsetneq(A\cup C)\times(B\cup D)$ en general.
+  \item $\Pw(A)\cap\Pw(B)=\Pw(A\cap B)$.
+  \item $\Pw(A)\cup\Pw(B)\subseteq\Pw(A\cup B)$, estricto salvo que $A\subseteq B$ o $B\subseteq A$.
+\end{itemize}
+ 
+% =====================================================
+\subsection{Trucos frecuentes en problemas}
+\begin{itemize}
+  \item Elementos que aparecen una cantidad impar de veces: XOR (o $\sd$) de todos los $A_i$.
+  \item Doble conteo: $\sum_i\card{A_i}=\sum_x\#\{i:x\in A_i\}$.
+  \item Pares intersecantes: $\#\{(i,j):A_i\cap A_j\ne\varnothing\}=\text{total}-\#\{\text{disjuntos}\}$.
+  \item Uni\'on de intervalos: ordenar y barrer; la longitud de la uni\'on \textbf{no} es la suma de longitudes (disjuntificar).
+  \item Antes de intercambiar $\bigcup\bigcap$, revisa que los cuantificadores no conmutan (fuente t\'ipica de bugs).
+  \item $\ov A$ y $\bigcap_\varnothing$ dependen de $U$; en m\'ascaras, el complemento exige \texttt{\& full}.
+\end{itemize}
+
+
+
+% =====================================================
+\section{Subconjuntos y funciones sobre m\'ascaras}
+\begin{itemize}
+  \item $\card{\Pw(A)}=2^{\card A}$; hay $\binom nk$ subconjuntos de tama\~no $k$; $\sum_k\binom nk=2^n$; $\sum_k(-1)^k\binom nk=0$ para $n\ge1$.
+  \item Pares $A\subseteq B\subseteq[n]$: $3^n$ (cada elemento: fuera de $B$, en $B\setminus A$, o en $A$).
+        De aqu\'i el costo $O(3^n)$ de enumerar los submasks de todas las m\'ascaras.
+  \item Cadenas $A_1\subseteq A_2\subseteq\dots\subseteq A_k\subseteq[n]$: $(k+1)^n$.
+  \item \textbf{Zeta} (subconjuntos): $\hat f(S)=\sum_{T\subseteq S}f(T)$, en $O(n2^n)$ procesando un bit a la vez.
+  \item Convoluci\'on OR: $\widehat{f*_{\cup}g}=\hat f\cdot\hat g$ (producto puntual tras la zeta).
+  \item Convoluci\'on AND: igual, con la transformada sobre supersets. Convoluci\'on XOR: Walsh--Hadamard.
+\end{itemize}
+\newcommand{\piso}[1]{\lfloor#1\rfloor}
+
+\subsection{Mobius General}
+ Para cualquier conjunto con orden parcial $\leq$ existe una funcion $\mu(x,y)$ que depende solo del orden
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{ll}
+\hline
+Suma hacia abajo & Suma hacia arriba \\
+\hline \hline 
+  \textit{Divisibilidad} \\
+  $g(n)=\displaystyle\sum_{d\mid n}^{\piso{V/d}}f(d)$
+  & $g(d)=\displaystyle\sum_{k\ge1}^{\piso{V/d}}f(kd)$ \\
+  
+  $f(n)=\displaystyle\sum_{d\mid n}\mu(d)\,g(n/d)$
+  & $f(d)=\displaystyle\sum_{k\ge1}\mu(k)\,g(kd)$ \\
+  \hline 
+  \textit{Subconjuntos} \\ 
+  $\hat f(S)=\displaystyle\sum_{T\subseteq S}f(T)$
+  & $\check f(S)=\displaystyle\sum_{T\supseteq S}f(T)$ \\
+  $f(S)=\displaystyle\sum_{T\subseteq S}(-1)^{|S\setminus T|}\hat f(T)$
+  & $f(S)=\displaystyle\sum_{T\supseteq S}(-1)^{|T\setminus S|}\check f(T)$ \\
+  \hline 
+  \textit{General (POSET)}  \\ 
+  $g(x)=\displaystyle\sum_{y\le x}f(y)$
+  & $g(x)=\displaystyle\sum_{y\ge x}f(y)$ \\
+  $f(x)=\displaystyle\sum_{y\le x}\mu(y,x)\,g(y)$
+  & $f(x)=\displaystyle\sum_{y\ge x}\mu(x,y)\,g(y)$ \\
+\hline
+\end{tabular}
+\end{center}
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+% \columnbreak
+\section{Probabilidad y Procesos Estocásticos}
+
+
+\subsection{Distribuciones Discretas Fundamentales}
+
+\subsubsection{Distribución de Bernoulli}
+Modela un único ensayo aleatorio con dos posibles resultados: Éxito ($1$) con probabilidad $p$, o Fracaso ($0$) con probabilidad $1-p$.
+\begin{itemize}
+    \item \textbf{Función de Masa de Probabilidad (PMF):} $P(X = k) = p^k (1-p)^{1-k}, \quad k \in \{0, 1\}$
+    \item \textbf{Esperanza:} $E[X] = 1 \cdot p + 0 \cdot (1-p) = p$
+    \item \textbf{Varianza:} $\text{Var}(X) = p(1-p)$
+    \item \textbf{Variable Indicadora:} Si $X_i$ es la variable indicadora de que ocurra un evento $A$, entonces $E[X_i] = P(A)$.
+\end{itemize}
+
+\subsubsection{Distribución Binomial}
+Modela la cantidad de éxitos $k$ obtenidos al realizar $n$ ensayos independientes de Bernoulli de probabilidad $p$.
+\begin{itemize}
+    \item \textbf{PMF:} $P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}, \quad k \in \{0, 1, \dots, n\}$
+    \item \textbf{Esperanza:} Por linealidad de la esperanza ($X = \sum_{j=1}^n X_j$):
+    $$E[X] = \sum_{j=1}^n E[X_j] = n \cdot p$$
+\end{itemize}
+
+\subsubsection{Distribución Geométrica y Tiempo de Parada}
+Modela el tiempo de parada $T$, definido como el número de ensayos de Bernoulli independientes con probabilidad de éxito $p$ necesarios hasta obtener el \textbf{primer éxito}.
+\begin{itemize}
+    \item \textbf{PMF:} $P(T = i) = (1-p)^{i-1} p, \quad i \in \{1, 2, 3, \dots\}$
+    \item \textbf{Esperanza (Tiempo Esperado de Parada):}
+    $$E[T] = \sum_{i=1}^{\infty} i \cdot P(T = i) = \sum_{i=1}^{\infty} i (1-p)^{i-1} p = \frac{1}{p}$$
+    \item \textbf{Interpretación de Casos Favorables entre Casos Totales:}
+    Si el espacio muestral en $i$ pasos tiene $M^i$ secuencias equiprobables y en los primeros $i-1$ pasos hay $F$ opciones de fracaso y en el $i$-ésimo hay $S$ opciones de éxito (donde $p = S/M$ y $1-p = F/M$):
+    $$P(T = i) = \frac{F^{i-1} \cdot S}{M^i} = \left(\frac{F}{M}\right)^{i-1} \left(\frac{S}{M}\right)$$
+\end{itemize}
+
+
+
+\subsection{Técnicas de Análisis en Procesos Estocásticos y Cadenas de Markov}
+
+\subsubsection{Análisis del Primer Paso (First-Step Analysis)}
+Para encontrar el tiempo esperado de llegada $E[u]$ desde un estado $u$ hacia un estado terminal, se condiciona sobre la primera transición saliente:
+$$E[u] = 1 + \sum_{v} P(u \to v) \cdot E[v]$$
+Donde el $+1$ representa el costo/tiempo unitario consumido al realizar el paso actual.
+
+\subsubsection{Despeje de Auto-ciclos (Self-Loops)}
+Si un estado $u$ transiciona a sí mismo con probabilidad $p_{self} = P(u \to u)$:
+$$E[u] = 1 + p_{self} \cdot E[u] + \sum_{v \neq u} P(u \to v) E[v]$$
+Despejando $E[u]$ algebraicamente para evitar recursión infinita:
+$$E[u] = \frac{1 + \sum_{v \neq u} P(u \to v) E[v]}{1 - p_{self}}$$
+
+\subsubsection{Linealidad de la Esperanza y Descomposición}
+Para cualquier conjunto de variables aleatorias $X_1, X_2, \dots, X_n$ (sean independientes o dependientes):
+$$E\left[\sum_{j=1}^n X_j\right] = \sum_{j=1}^n E[X_j]$$
+Permite calcular el tiempo esperado total de transformar $N$ elementos como $N$ veces el tiempo esperado de transformar un solo elemento, siempre que el proceso afecte a cada elemento de manera independiente.
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+
+\subsection{Ideas:}
+\begin{description}
+    \item[Maximo] $max_i \le c$ $\iff$  $\forall i \ X_i \le c$ 
+    \item[] El proceso primero elige una situación o estado y luego evoluciona de manera distinta según esa elección.
+    $$ \mathbb E[X]=\sum_s\Pr(S=s)\mathbb E[X\mid S=s]$$
+\end{description}
+
+
+
+
+
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=%=
+\columnbreak
+\section{Plantilla Python}
+\begin{minted}{cpp}
+# librerias
+import os, random, re, sys
+from collections import deque
+# limite memoria
+sys.setrecursionlimit(200000)
+# --- --- --- INTPUT & FAST --- --- ---
+sys.stdin = open("in.txt", 'r', encoding='utf-8') # comentar
+input = sys.stdin.readline
+# --- --- --- DEBUG --- --- ---
+DEB = False # True False
+def debug(*args, **kwargs):
+    if DEB:
+        print("[DEBUG]", *args, **kwargs, file=sys.stderr)
+# --- --- --- Leer y resolver --- --- ---
+def solve():
+    # separar multiples enteros en una línea
+    n,m  = map(int, input().split())  
+    # leer y quitar salto '\n'
+    n = int( input().rstrip() ) 
+    # leer una lista de enteros
+    h = list( map(int, input().rstrip().split()) )
+    # cadena de texto sin espacios
+    s = input().rstrip()
+    # escribir codigo aqui
+# --- --- --- MAIN --- --- ---
+if __name__ == "__main__":
+    t = int( input() ) 
+    for i in range(t):
+        solve()   
+\end{minted}
+
+
+\subsection{Fenwick Tree}
+
+Query puntual, actualizaciones en rangos. $O(\log n)$
+
+\begin{minted}{cpp}   
+class Fenwick:
+    def __init__( self, n ):
+        self.bit = [0] * (n+1)
+        self.n = n
+    def add( self, i, val ): # agrega puntual
+        i += 1
+        while i <= self.n:
+            self.bit[i] += val
+            i += i & (-i)  
+    def add_rango( self, l, r, val): # en rango
+        self.add( l, val)
+        if r+ 1 < self.n :
+            self.add( r+1, -val )
+    def query_puntual( self, i): # query para un solo punto
+        res = 0
+        i += 1
+        while i > 0:
+            res += self.bit[i]
+            i -= i & (-i)
+        return res 
+def solve():
+    n,m  =   map(int, input().split())
+    arbol = Fenwick(n)
+    for _ in range(m):
+        a,b, val =   map(int, input().split())
+        arbol.add_rango( l=a-1, r=b-1, val = val)
+    for i in range(n):
+        print( arbol.query_puntual(i) )
+\end{minted}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%    PROBA    %%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\section{Modelado}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                           PARTE 1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Distribuciones}
+Discretas
+\begin{description}
+\item[Bernoulli] $X\!\sim\!\mathrm{Ber}(p)$, $p\!\in\!(0,1)$; $\mathcal S_X\!=\!\{0,1\}$; $f(x)\!=\!p^x(1\!-\!p)^{1-x}$; $\E\!=\!p$; $\Var\!=\!p(1\!-\!p)$; $M(t)\!=\!1\!-\!p\!+\!pe^t$.
+\item[Binomial] $X\!\sim\!\mathrm{Bin}(n,p)$; $\mathcal S_X\!=\!\{0,\dots,n\}$; $f(x)\!=\!\binom nx p^x(1\!-\!p)^{n-x}$; $\E\!=\!np$; $\Var\!=\!np(1\!-\!p)$; $M(t)\!=\!(1\!-\!p\!+\!pe^t)^n$.
+\item[Geométrica] (ensayos hasta el 1.er éxito) $X\!\sim\!\mathrm{Geo}(p)$, $p\!\in\!(0,1]$; $\mathcal S_X\!=\!\{1,2,\dots\}$; $f(x)\!=\!(1\!-\!p)^{x-1}p$; $\E\!=\!\frac1p$; $\Var\!=\!\frac{1-p}{p^2}$; $M(t)\!=\!\frac{pe^t}{1-(1-p)e^t}$, $t\!<\!-\ln(1\!-\!p)$.
+\item[Bin. Negativa] (ensayos hasta el $r$-ésimo éxito) $X\!\sim\!\mathrm{NB}(r,p)$; $\mathcal S_X\!=\!\{r,r\!+\!1,\dots\}$; $f(x)\!=\!\binom{x-1}{r-1}p^r(1\!-\!p)^{x-r}$; $\E\!=\!\frac rp$; $\Var\!=\!\frac{r(1-p)}{p^2}$; $M(t)\!=\!\big(\frac{pe^t}{1-(1-p)e^t}\big)^r$, $t\!<\!-\ln(1\!-\!p)$.
+\item[Poisson] $X\!\sim\!\mathrm{Poi}(\lambda)$, $\lambda\!>\!0$; $\mathcal S_X\!=\!\{0,1,\dots\}$; $f(x)\!=\!\frac{e^{-\lambda}\lambda^x}{x!}$; $\E\!=\!\Var\!=\!\lambda$; $M(t)\!=\!e^{\lambda(e^t-1)}$.
+\item[Hipergeom.] $X\!\sim\!\mathrm{Hyp}(N,K,n)$; $\mathcal S_X\!=\!\{\max(0,n\!-\!N\!+\!K),\dots,\min(n,K)\}$; $f(x)\!=\!\frac{\binom Kx\binom{N-K}{n-x}}{\binom Nn}$; $\E\!=\!\frac{nK}N$; $\Var\!=\!n\frac KN(1\!-\!\frac KN)\frac{N-n}{N-1}$; $M(t)$ sin forma elemental (${}_2F_1$).
+\end{description}
+Continuas
+\begin{description}
+\item[Uniforme] $X\!\sim\!\mathcal U(a,b)$; $\mathcal S_X\!=\![a,b]$; $f(x)\!=\!\frac1{b-a}$; $\E\!=\!\frac{a+b}2$; $\Var\!=\!\frac{(b-a)^2}{12}$; $M(t)\!=\!\frac{e^{tb}-e^{ta}}{t(b-a)}$ ($t\!\neq\!0$), $M(0)\!=\!1$.
+\item[Exponencial] $X\!\sim\!\mathrm{Exp}(\lambda)$, $\lambda\!>\!0$; $\mathcal S_X\!=\![0,\infty)$; $f(x)\!=\!\lambda e^{-\lambda x}$; $\E\!=\!\frac1\lambda$; $\Var\!=\!\frac1{\lambda^2}$; $M(t)\!=\!\frac\lambda{\lambda-t}$, $t\!<\!\lambda$.
+\item[Normal] $X\!\sim\!\mathcal N(\mu,\sigma^2)$, $\sigma\!>\!0$; $\mathcal S_X\!=\!\mathbb R$; $f(x)\!=\!\frac1{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}$; $\E\!=\!\mu$; $\Var\!=\!\sigma^2$; $M(t)\!=\!e^{\mu t+\sigma^2t^2/2}$.
+\item[Gamma] (forma--tasa) $X\!\sim\!\mathrm{Gamma}(\alpha,\beta)$; $\mathcal S_X\!=\!(0,\infty)$; $f(x)\!=\!\frac{\beta^\alpha}{\Gamma(\alpha)}x^{\alpha-1}e^{-\beta x}$; $\E\!=\!\frac\alpha\beta$; $\Var\!=\!\frac\alpha{\beta^2}$; $M(t)\!=\!(\frac\beta{\beta-t})^\alpha$, $t\!<\!\beta$.
+\item[Beta] $X\!\sim\!\mathrm{Beta}(\alpha,\beta)$; $\mathcal S_X\!=\![0,1]$; $f(x)\!=\!\frac{x^{\alpha-1}(1-x)^{\beta-1}}{B(\alpha,\beta)}$, $B\!=\!\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$; $\E\!=\!\frac\alpha{\alpha+\beta}$; $\Var\!=\!\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$; $M(t)\!=\!{}_1F_1(\alpha;\alpha\!+\!\beta;t)$.
+\end{description}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                           PARTE 2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Casos de uso y modelación}
+\begin{description}
+\item[Guía rápida: señal $\to$ modelo] ``$n$ intentos iguales e independientes, contar éxitos'' $\to$ Bin; ``intentos hasta el primer/$r$-ésimo éxito'' $\to$ Geo/NB; ``eventos raros en un intervalo'', sin $n$ explícito $\to$ Poi; ``sacar sin reemplazo'' $\to$ Hyp; ``punto/instante al azar'' $\to$ $\mathcal U$; ``tiempo hasta que ocurre'' con tasa constante $\to$ Exp; ``tiempo hasta el $k$-ésimo evento'' $\to$ Gamma; ``suma de muchas partes pequeñas'' $\to$ $\mathcal N$ (aproximación); ``$p$ desconocida'' o ``$p$ uniforme'' $\to$ Beta (Laplace); ``solo importa el orden relativo'' $\to$ permutación uniforme (intercambiabilidad). \textbf{Antes de modelar:} (i) ¿hay independencia o solo intercambiabilidad? (ii) ¿la linealidad de $\E$ resuelve sin conocer la distribución? (iii) ¿se pide exactitud o tolerancia $10^{-6}$?
+
+\item[Ber/Bin] \textbf{Señal:} $n$ intentos independientes con la misma $p$; indicador de un evento. \textbf{Modelo:} $X=\sum_{j\le n}X_j$, $X_j\overset{iid}\sim\mathrm{Ber}(p)$; $\Prob(X\ge1)=1-(1-p)^n$ (complemento). \textbf{Relaciones:} $\mathrm{Bin}(n,p)+\mathrm{Bin}(m,p)=\mathrm{Bin}(n + m,p)$ (indep.); $\approx\mathrm{Poi}(np)$ si $n\to\infty$, $np\to\lambda$; $\approx\mathcal N(np,np(1 - p))$ si $np(1 - p)\gtrsim10$ (con corrección de continuidad $\pm\frac12$); si $X\sim\mathrm{Bin}(n,p)$, $Y\sim\mathrm{Bin}(m,p)$ indep., entonces $X\mid(X + Y{=}s)\sim\mathrm{Hyp}$. \textbf{En CP:} $\E[\sum X_j]=\sum\E[X_j]$ vale \emph{aunque haya dependencia} (la varianza sí exige independencia); pmf con recurrencia $f(k + 1)=f(k)\frac{n-k}{k+1}\frac p{1-p}$ en $O(n)$, o factoriales precalculados (mod $M$) en $O(1)$ por término; $n$ grande en reales $\Rightarrow$ logaritmos de factoriales (\texttt{lgamma}).
+
+\item[Geo] \textbf{Señal:} ``cuántos intentos hasta el primer éxito'', ``se repite hasta que sale'', reinicio tras fallo. \textbf{Modelo:} tiempo de espera discreto; $\Prob(X > k)=(1 - p)^k$; es la única discreta sin memoria: $\Prob(X > m + k\mid X>m)=\Prob(X > k)$. \textbf{Relaciones:} $\min_i\mathrm{Geo}(p_i)\sim\mathrm{Geo}\bigl(1-\prod_i(1 - p_i)\bigr)$ (indep.); $\mathrm{Geo}(\lambda/n)/n\to\mathrm{Exp}(\lambda)$. \textbf{En CP:} en un DP, el autolazo se despeja como $E=c+(1 - p)E+\dots\Rightarrow E=\frac{c+\dots}{p}$ (no hay que iterar); muestreo por inversión $\lceil\ln U/\ln(1 - p)\rceil$.
+
+\item[NB] \textbf{Señal:} ``intentos hasta acumular $r$ éxitos''. \textbf{Modelo:} $X=\sum_{j\le r}G_j$, $G_j\overset{iid}\sim\mathrm{Geo}(p)$; en la pmf el último ensayo es éxito y los $r - 1$ anteriores se reparten entre las $x - 1$ posiciones. \textbf{Relaciones:} dualidad $\Prob(\mathrm{NB}(r,p)\le x)=\Prob(\mathrm{Bin}(x,p)\ge r)$; versión por fracasos $=X-r$ (soporte desde 0; cuidar la convención). \textbf{En CP:} la dualidad evita un DP sobre ``éxitos acumulados'' y da la cola en $O(r)$ sumando una binomial.
+
+\item[Poisson] \textbf{Señal:} conteo de eventos raros e independientes en un intervalo, dado el promedio $\lambda$ pero no $n$; llegadas a una cola. \textbf{Modelo:} $N(t)\sim\mathrm{Poi}(\lambda t)$ con conteos independientes en intervalos disjuntos. \textbf{Relaciones:} superposición: $\mathrm{Poi}(\lambda_1) + \mathrm{Poi}(\lambda_2)\sim\mathrm{Poi}(\lambda_1 + \lambda_2)$; \emph{thinning}: conservar cada evento con prob.\ $q$ da $\mathrm{Poi}(\lambda q)$, y conservados y descartados son independientes; $N_1\mid(N_1 + N_2{=}s)\sim\mathrm{Bin}\bigl(s,\frac{\lambda_1}{\lambda_1+\lambda_2}\bigr)$; $\mathrm{Bin}(n,p)\approx\mathrm{Poi}(np)$. \textbf{En CP:} recurrencia $f(k + 1)=f(k)\frac\lambda{k+1}$ y truncar la serie hacia $k\approx\lambda+c\sqrt\lambda$; \emph{Poissonización}: con $n$ fijo los conteos por categoría son dependientes, pero con $N\sim\mathrm{Poi}(\lambda)$ son independientes $\Rightarrow$ se calcula fácil y se des-poissoniza.
+
+\item[Hyp] \textbf{Señal:} elegir $n$ de $N$ elementos distinguibles sin reemplazo (cartas, lotes, equipos). \textbf{Modelo:} cada elemento queda elegido con prob.\ $\frac nN$ por simetría, así que $\E[\#\text{rojos elegidos}]=\frac{nK}N$ sin importar la dependencia; la $n$-ésima extracción es roja con prob.\ $\frac KN$ (intercambiabilidad), pero \emph{condicionada a $g$ rojas previas} es $\frac{K-g}{N-(n-1)}$. \textbf{Relaciones:} si $N\to\infty$ y $K/N\to p$, $\to\mathrm{Bin}(n,p)$; versión multivariada para varias categorías. \textbf{En CP:} $\Prob=\binom Kk\binom{N-K}{n-k}/\binom Nn$ con factoriales modulares en $O(1)$; para probabilidades de configuraciones, contar casos favorables $/$ totales evita DP.
+
+\item[Uniforme] \textbf{Señal:} ``punto/instante al azar'', sin preferencia; ``permutación aleatoria''. \textbf{Modelo:} probabilidad $\propto$ longitud, área o volumen (problemas geométricos se reducen a áreas en el cuadrado unidad); si solo importa el orden de $n$ uniformes iid continuas, todas las $n!$ permutaciones son equiprobables. \textbf{Relaciones:} $U\sim\mathcal U(0,1)\Rightarrow F^{-1}(U)\sim F$ (transformada inversa); $-\ln U\sim\mathrm{Exp}(1)$; estadísticos de orden $\to$ Beta. \textbf{En CP:} ``probabilidad de que el elemento $j$ sea el mayor/récord'' se resuelve por simetría sin integrar; para áreas complicadas, integral en $O(1)$ o partición en regiones.
+
+\item[Exp] \textbf{Señal:} ``tiempo hasta que ocurre'' con tasa constante; varios procesos compitiendo en paralelo; ``falta de memoria''. \textbf{Modelo:} cadena de Markov en tiempo continuo: en el estado $s$ se espera $\mathrm{Exp}(\Lambda_s)$, $\Lambda_s=\sum\lambda_{s\to s'}$, y se salta a $s'$ con prob.\ $\frac{\lambda_{s\to s'}}{\Lambda_s}$. \textbf{Relaciones:} $\min_iT_i\sim\mathrm{Exp}(\sum\lambda_i)$, y $\Prob(T_k{=}\min)=\frac{\lambda_k}{\sum\lambda_i}$ (indep.); el máximo de $n$ iid $\mathrm{Exp}(\lambda)$ tiene $\E=\frac{H_n}\lambda$; los tiempos entre llegadas de un proceso de Poisson son Exp (dualidad). \textbf{En CP:} se convierte en DP discreto sobre la cadena embebida: $E[s]=\frac1{\Lambda_s}+\sum_{s'}\frac{\lambda_{s\to s'}}{\Lambda_s}E[s']$, sin integrales ni reales continuos.
+
+\item[Normal] \textbf{Señal:} suma de muchas contribuciones pequeñas e independientes (TLC); enunciado que tolera error $\sim10^{-6}$ con $n$ enorme. \textbf{Modelo:} $\sum X_j\approx\mathcal N(n\mu,n\sigma^2)$; estandarizar con $Z=\frac{X-\mu}\sigma$ y usar $\Phi$. \textbf{Relaciones:} cerrada bajo suma independiente: $\mathcal N(\mu_1,\sigma_1^2)+\mathcal N(\mu_2,\sigma_2^2)=\mathcal N(\mu_1 + \mu_2,\sigma_1^2 + \sigma_2^2)$; aproxima Bin y Poi; Berry--Esseen: error $O(1/\sqrt n)$, malo en colas. \textbf{En CP:} es una \emph{aproximación}; si piden exactitud o respuesta modular no se usa. $\Phi(x)=\frac12\texttt{erfc}(-x/\sqrt2)$ en C++; para estimar tamaños o cotas es suficiente.
+
+\item[Gamma] \textbf{Señal:} ``tiempo hasta el $k$-ésimo evento'' en un proceso de Poisson. \textbf{Modelo:} Erlang: $T=\sum_{j\le k}\mathrm{Exp}(\lambda)$. \textbf{Relaciones:} dualidad $\Prob(T\le t)=\Prob(\mathrm{Poi}(\lambda t)\ge k)$ (la integral se vuelve una suma finita de $k$ términos); $\mathrm{Gamma}(\alpha,\beta)+\mathrm{Gamma}(\alpha',\beta)=\mathrm{Gamma}(\alpha + \alpha',\beta)$ (indep., misma tasa); si $X\sim\mathrm{Gamma}(\alpha)$, $Y\sim\mathrm{Gamma}(\beta)$ indep., $\frac X{X+Y}\sim\mathrm{Beta}(\alpha,\beta)$ e independiente de $X + Y$. \textbf{En CP:} cola exacta en $O(k)$; normalizar $n$ exponenciales iid da un punto uniforme en el simplejo (Dirichlet(1,\dots,1)).
+
+\item[Beta] \textbf{Señal:} probabilidad desconocida $p$ (``uniforme'' $\Rightarrow$ Beta(1,1)); posición del $k$-ésimo punto de $n$ uniformes. \textbf{Modelo:} prior conjugado de Ber/Bin con $a$ éxitos y $b$ fracasos virtuales: $p\mid(g\text{ de }i)\sim\mathrm{Beta}(a + g,b + i - g)$ y $\Prob(X_{i+1}{=}1\mid g\text{ de }i)=\frac{a+g}{a+b+i}$ (Laplace si $a{=}b{=}1$: $\frac{g+1}{i+2}$). \textbf{Relaciones:} $U_{(k)}\sim\mathrm{Beta}(k,n - k + 1)$; generalización a $k$ categorías: Dirichlet; urna de Pólya $\equiv$ Beta--Binomial. \textbf{En CP:} DP sobre $(i,g)$ con transición $\frac{a+g}{a+b+i}$ (inversos modulares de $a + b + i$) en $O(N^2)$; si solo importa el total de éxitos con Beta(1,1), es uniforme en $\{0,\dots,n\}$ y no hace falta DP.
+
+\item[Mapa de relaciones] Ber $\xrightarrow{\Sigma}$ Bin $\to$ Poi (raro) $/\ \mathcal N$ (TLC); Geo $\xrightarrow{\Sigma}$ NB; Exp $\xrightarrow{\Sigma}$ Gamma; Geo $\xrightarrow{n\to\infty}$ Exp; Poi $\leftrightarrow$ Exp (conteo $\leftrightarrow$ espera); Bin $\leftrightarrow$ NB, Gamma $\leftrightarrow$ Poi (dualidades de colas); Hyp $\xrightarrow{N\to\infty}$ Bin; Gamma/Gamma $\to$ Beta; Beta $\leftrightarrow$ Bin (conjugación) y $U_{(k)}\sim$ Beta; Exp(1) $=-\ln\mathcal U$.
+\end{description}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                           PARTE 3
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+\section{Modelacion avanzada}
+\begin{description}
+
+\item[Laplace / Beta--Binomial] \textbf{(1) Contexto.} Un evento (servidor falla, aparece un monstruo, moneda cae cara) ocurre con probabilidad fija pero desconocida $p$; tras $i$ intentos con $g$ éxitos se pide la probabilidad del siguiente, o un DP sobre estados $(i,g)$. \textbf{(2) Modelo.} $\theta\sim\mathrm{Beta}(a,b)$, $X_j\mid\theta\overset{\mathrm{iid}}{\sim}\mathrm{Ber}(\theta)$, $S_i=\sum_{j\le i}X_j$ (los $X_j$ son intercambiables, no independientes). 
+\textbf{(3) Resultado.} 
+$\theta\mid S_i{=}g\sim\mathrm{Beta}(a + g,\,b + i - g)$; $\Prob(X_{i+1}{=}1\mid S_i{=}g)=\frac{a+g}{a+b+i}$; $\Prob(S_n{=}k)=\binom nk\frac{B(a+k,\,b+n-k)}{B(a,b)}$; una secuencia concreta con $k$ éxitos tiene probabilidad $\frac{B(a+k,\,b+n-k)}{B(a,b)}$. Con $a{=}b{=}1$: $\frac{g+1}{i+2}$ y $S_n$ uniforme en $\{0,\dots,n\}$. \textbf{(4) Idea.} Integral beta $\int_0^1\theta^x(1 - \theta)^y d\theta=\frac{x!\,y!}{(x+y+1)!}$ (por partes) y Bayes: posterior $\propto$ verosimilitud $\times$ prior; Beta es conjugada de Bernoulli. Alternativa sin integrales: argumento de los huecos con $i + 2$ uniformes. \textbf{(5) CP.}  Conviene cuando ``$p$ fija desconocida'' y se aprende de los resultados.
+
+\item[Dirichlet--Multinomial] \textbf{(1) Contexto.} Igual que Laplace pero con $k$ resultados posibles (dado de $k$ caras con sesgo desconocido, $k$ tipos de enemigos). \textbf{(2) Modelo.} $\theta\sim\mathrm{Dir}(\alpha_1,\dots,\alpha_k)$, $X_j\mid\theta\overset{\mathrm{iid}}{\sim}\mathrm{Cat}(\theta)$, conteos $c_m$ tras $i$ observaciones, $\alpha_0=\sum_m\alpha_m$. \textbf{(3) Resultado.} $\theta\mid c\sim\mathrm{Dir}(\alpha+c)$; $\Prob(X_{i+1}{=}m\mid c)=\frac{\alpha_m+c_m}{\alpha_0+i}$ (Laplace: $\frac{c_m+1}{i+k}$); $\Prob(c)=\frac{n!}{\prod_m c_m!}\cdot\frac{\Gamma(\alpha_0)}{\Gamma(\alpha_0+n)}\prod_m\frac{\Gamma(\alpha_m+c_m)}{\Gamma(\alpha_m)}$. \textbf{(4) Idea.} Integral de Dirichlet $\int_{\Delta}\prod\theta_m^{x_m-1}d\theta=\frac{\prod\Gamma(x_m)}{\Gamma(\sum x_m)}$ y conjugación; equivale a una urna de Pólya con $\alpha_m$ bolas de cada color. \textbf{(5) CP.} $O(k)$ por consulta o $O(1)$ manteniendo $i$ y $c$; el estado de un DP es el vector de conteos (compresión: contar solo cuántos colores tienen cada conteo). Conviene con varias categorías y probabilidades desconocidas e intercambiables.
+
+\item[Urna de P\'olya] \textbf{(1) Contexto.} Se saca una bola, se devuelve y se agregan $c$ bolas del mismo color (``el rico se hace m\'as rico''). \textbf{(2) Modelo.} Inicio con $a$ rojas y $b$ azules; $R_n$ = rojas obtenidas en $n$ extracciones. \textbf{(3) Resultado.} $\Prob(\text{roja en }n + 1\mid R_n{=}r)=\frac{a+cr}{a+b+cn}$; una secuencia con $r$ rojas y $n - r$ azules tiene probabilidad $\frac{a^{(r,c)}\,b^{(n-r,c)}}{(a+b)^{(n,c)}}$ con $x^{(m,c)}=x(x + c)\cdots(x + (m - 1)c)$. Es exactamente Beta--Binomial con $(a/c,\,b/c)$ y la fracción límite es $\mathrm{Beta}(a/c,b/c)$. \textbf{(4) Idea.} Inducción sobre la secuencia: el numerador y el denominador son productos crecientes que no dependen del orden (intercambiabilidad). \textbf{(5) CP.} $O(1)$ por paso, DP $(n,r)$ en $O(N^2)$. Conviene cuando la probabilidad de la siguiente extracci\'on es proporcional al conteo acumulado.
+
+\item[Estad\'isticos de orden y espaciamientos] \textbf{(1) Contexto.} Se eligen $n$ puntos al azar en $[0,1]$ (o una vara se parte en $n + 1$ trozos) y se pregunta por el mayor, el menor, el $k$-\'esimo o el trozo m\'as largo. \textbf{(2) Modelo.} $U_1,\dots,U_n\overset{\mathrm{iid}}{\sim}\mathcal U(0,1)$, $U_{(1)}\le\dots\le U_{(n)}$, espaciamientos $D_j=U_{(j)}-U_{(j-1)}$ con $U_{(0)}{=}0$, $U_{(n+1)}{=}1$. \textbf{(3) Resultado.} $U_{(k)}\sim\mathrm{Beta}(k,\,n - k + 1)$; $\E[U_{(k)}]=\frac k{n+1}$; $\Var=\frac{k(n-k+1)}{(n+1)^2(n+2)}$; $\E[\max]=\frac n{n+1}$, $\E[\min]=\frac1{n+1}$, $\E[\text{rango}]=\frac{n-1}{n+1}$; $(D_1,\dots,D_{n+1})\sim\mathrm{Dir}(1,\dots,1)$ (intercambiables, cada una con esperanza $\frac1{n+1}$); $\E[\max_j D_j]=\frac1{n+1}\sum_{j=1}^{n+1}\frac1j$; $\Prob(U_{n+1}\text{ es el }k\text{-\'esimo menor})=\frac1{n+1}$. Para otra $F$ continua: aplicar $F^{-1}$. \textbf{(4) Idea.} $\Prob(U_{(k)}\in dx)=\frac{n!}{(k-1)!(n-k)!}x^{k-1}(1 - x)^{n-k}dx$ (elegir cu\'ales $k - 1$ caen antes de $x$, una cae en $dx$, el resto despu\'es); espaciamientos intercambiables por simetr\'ia, y $\sum D_j=1$ da la esperanza. \textbf{(5) CP.} $O(1)$. Conviene cuando aparecen m\'aximos/m\'inimos de uniformes, partir intervalos al azar o ``probabilidad de que el nuevo punto sea r\'ecord''.
+
+\item[Suma de colas y m\'aximo discreto] \textbf{(1) Contexto.} Esperanza del m\'aximo de $n$ dados de $d$ caras, o de cualquier v.a. entera no negativa con cola conocida. \textbf{(2) Modelo.} $X\ge0$ entera (o continua). \textbf{(3) Resultado.} $\E[X]=\sum_{k\ge1}\Prob(X\ge k)$ y $\E[X]=\int_0^\infty\Prob(X>t)\,dt$; para $M=\max$ de $n$ dados iid de $d$ caras: $\E[M]=\sum_{x=1}^{d}\bigl(1-(\tfrac{x-1}d)^n\bigr)=d-\sum_{x=1}^{d-1}(\tfrac xd)^n$. \textbf{(4) Idea.} $X=\sum_{k\ge1}\mathbf 1[X\ge k]$ y linealidad (o Fubini en el caso continuo); $\Prob(M\le x)=(x/d)^n$ por independencia. \textbf{(5) CP.} $O(d\log n)$ con exponenciaci\'on r\'apida. Conviene siempre que $\Prob(X\ge k)$ es m\'as f\'acil que la pmf.
+
+\item[Coleccionista de cupones generalizado] \textbf{(1) Contexto.} Hay $n$ tipos de cup\'on y cada compra da el tipo $i$ con probabilidad $p_i$; se pide el n\'umero esperado de compras hasta tener todos (o $m$ distintos). \textbf{(2) Modelo.} $T$ = primer instante en que todos los tipos aparecieron, $\sum p_i=1$. \textbf{(3) Resultado.} $\E[T]=\int_0^\infty\Bigl(1-\prod_{i=1}^n(1-e^{-p_it})\Bigr)dt=\sum_{\emptyset\ne J\subseteq[n]}\frac{(-1)^{|J|+1}}{p(J)}$, con $p(J)=\sum_{i\in J}p_i$. Caso uniforme: $\E[T]=nH_n$ y $\Var(T)=n^2\sum_{j=1}^n\frac1{j^2}-nH_n$. Para $m$ distintos (uniforme): $\E=\sum_{k=0}^{m-1}\frac n{n-k}$. \textbf{(4) Idea.} Poissonizaci\'on: las compras llegan como proceso de Poisson de tasa 1, el tipo $i$ aparece como proceso independiente de tasa $p_i$, as\'i que el tiempo continuo es $\max_i\mathrm{Exp}(p_i)$ con $\Prob(\le t)=\prod_i(1 - e^{-p_it})$; el tiempo medio entre llegadas es 1 y por Wald $\E[T_{\text{cont}}]=\E[T]$. Expandir el producto da inclusi\'on--exclusi\'on con $\int_0^\infty e^{-p(J)t}dt=\frac1{p(J)}$. \textbf{(5) CP.} Inclusi\'on--exclusi\'on $O(2^n)$ ($n\lesssim20$); si los $p_i$ son enteros peque\~nos, DP sobre la suma $p(J)$ con signo en $O(n\cdot S)$; uniforme $O(n)$. Conviene con probabilidades no uniformes y $n$ peque\~no, o con DP por estados ``cu\'antos faltan''.
+
+\item[Identidad Min--Max] \textbf{(1) Contexto.} Esperanza del tiempo en que \emph{todos} los elementos de un conjunto han ocurrido (cupones, procesos paralelos, lámparas que se apagan). \textbf{(2) Modelo.} Variables aleatorias $X_i$ (cualquier dependencia), $S=\{1,\dots,n\}$. \textbf{(3) Resultado.} $\max S=\sum_{\emptyset\ne T\subseteq S}(-1)^{|T|+1}\min T$, y por linealidad $\E[\max S]=\sum_{T\ne\emptyset}(-1)^{|T|+1}\E[\min T]$. Generalizaci\'on: $\E[k\text{-\'esimo mayor}]=\sum_{T}(-1)^{|T|-k}\binom{|T|-1}{k-1}\E[\min T]$. \textbf{(4) Idea.} Para reales $x_i\ge0$ y $t\ge0$: $\mathbf 1[\max>t]=1-\prod_i(1-\mathbf 1[x_i>t])=\sum_{T\ne\emptyset}(-1)^{|T|+1}\prod_{i\in T}\mathbf 1[x_i>t]=\sum_T(-1)^{|T|+1}\mathbf 1[\min T>t]$ (producto = indicador del m\'inimo), e integrar en $t$ (o aplicar cualquier funcional lineal). \textbf{(5) CP.} $O(2^n)$ en general; \'util cuando $\E[\min T]$ tiene forma cerrada (p. ej.\ $\frac1{p(T)}$ para exponenciales o cupones, con DP sobre la suma como arriba). Conviene si el m\'inimo de un subconjunto es f\'acil pero el m\'aximo no.
+
+\item[Carrera de exponenciales y Poissonizaci\'on] \textbf{(1) Contexto.} Varios procesos independientes compiten (cola de servidores, cupones con tiempos continuos); se pide qui\'en termina primero o cu\'anto tarda el \'ultimo. \textbf{(2) Modelo.} $T_i\sim\mathrm{Exp}(\lambda_i)$ independientes, $\Lambda=\sum\lambda_i$. \textbf{(3) Resultado.} $\min_iT_i\sim\mathrm{Exp}(\Lambda)$; $\Prob(T_k=\min_iT_i)=\frac{\lambda_k}{\Lambda}$; el m\'inimo es independiente de cu\'al lo alcanza; si $\lambda_i{=}\lambda$: $\E[\max]=\frac{H_n}{\lambda}$ y $\E[k\text{-\'esimo en terminar}]=\frac1\lambda\sum_{j=0}^{k-1}\frac1{n-j}$. En una CTMC, cada estado dura $\mathrm{Exp}(\Lambda_s)$ con $\E=\frac1{\Lambda_s}$ y salta a $s'$ con probabilidad $\frac{\lambda_{s\to s'}}{\Lambda_s}$. \textbf{(4) Idea.} $\Prob(\min>t)=\prod e^{-\lambda_it}=e^{-\Lambda t}$; falta de memoria $\Rightarrow$ tras cada llegada el resto sigue siendo exponencial con los mismos par\'ametros. \textbf{(5) CP.} $O(1)$ por paso del DP sobre estados; convierte problemas continuos en cadenas discretas ponderadas por $\frac1\Lambda$. Conviene cuando el enunciado habla de tiempos continuos o tasas.
+
+\item[Ruina del jugador] \textbf{(1) Contexto.} Un caminante empieza en $i$, sube con probabilidad $p$ y baja con $q=1 - p$, y se detiene al llegar a $0$ o a $N$. \textbf{(2) Modelo.} Paseo $S_n$ con barreras absorbentes; $r=q/p$; $P_i=\Prob(\text{llegar a }N\text{ antes que a }0)$; $T$ = tiempo de parada. \textbf{(3) Resultado.} $P_i=\frac{1-r^i}{1-r^N}$ si $p\ne q$ y $P_i=\frac iN$ si $p=q$; $\E[T_i]=i(N - i)$ si $p=q$, y $\E[T_i]=\frac1{q-p}\Bigl(i-N\,\frac{1-r^i}{1-r^N}\Bigr)$ si $p\ne q$. Con una sola barrera (en $0$): ruina con probabilidad $\min(1,r^i)$. \textbf{(4) Idea.} An\'alisis del primer paso: $P_i=pP_{i+1}+qP_{i-1}$, ecuaci\'on caracter\'istica $px^2-x+q=0$ con ra\'ices $1$ y $r$; para el tiempo $E_i=1+pE_{i+1}+qE_{i-1}$ con soluci\'on particular $\frac i{q-p}$. Alternativa: $r^{S_n}$ y $S_n-(p-q)n$ son martingalas; teorema de parada opcional. \textbf{(5) CP.} $O(1)$ con potencias modulares (si $r\equiv1$ mod $M$ usar el caso $p=q$ con cuidado). Conviene en pasos aleatorios 1D con barreras; con pasos no unitarios pasa a ecuaciones lineales (siguiente \'item).
+
+\item[Cadenas de Markov absorbentes] \textbf{(1) Contexto.} Un proceso salta entre estados con probabilidades fijas hasta caer en un estado terminal; se pide la probabilidad de terminar en cada uno o el tiempo esperado. \textbf{(2) Modelo.} $P=\begin{pmatrix}Q&R\\0&I\end{pmatrix}$ con $Q$ transitorio$\to$transitorio y $R$ transitorio$\to$absorbente. \textbf{(3) Resultado.} Matriz fundamental $N=(I-Q)^{-1}=\sum_{k\ge0}Q^k$ ($N_{uv}$ = visitas esperadas a $v$ desde $u$); tiempos esperados $t=N\mathbf 1$; probabilidades de absorci\'on $B=NR$; probabilidad de estar en $s$ tras exactamente $T$ pasos: $e_u^\top P^T$. \textbf{(4) Idea.} $Q^k\to0$ (de cada estado transitorio se escapa con probabilidad positiva), luego la serie geom\'etrica matricial converge y $(I - Q)N=I$; sumar sobre columnas da el n\'umero esperado de pasos. \textbf{(5) CP.} Eliminaci\'on gaussiana $O(s^3)$ (modular: verificar que $I - Q$ sea invertible mod $M$); matrices tridiagonales (1D) en $O(s)$; horizonte $T$ grande con exponenciaci\'on $O(s^3\log T)$ o Kitamasa/Berlekamp--Massey si hay recurrencia lineal; en \'arboles/DAG escribir $E_v=a_vE_{\mathrm{padre}}+b_v$ y despejar en $O(n)$ (``inc\'ognita lineal''). Conviene en cualquier ``esperanza de pasos hasta terminar'' con ciclos.
+
+\item[Paseos aleatorios en grafos] \textbf{(1) Contexto.} Una part\'icula salta a un vecino uniforme; se pide tiempo esperado para llegar a $v$, para volver, o para visitar todo. \textbf{(2) Modelo.} Grafo conexo no dirigido con $m$ aristas; $h(u,v)=\E[\text{pasos }u\to v]$. \textbf{(3) Resultado.} Distribuci\'on estacionaria $\pi_v=\frac{\deg v}{2m}$; tiempo de retorno $\E_v[T_v^+]=\frac{2m}{\deg v}$; tiempo de conmutaci\'on $h(u,v)+h(v,u)=2m\,R_{\mathrm{ef}}(u,v)$; tiempo de cobertura $\le2m(n - 1)$; en un camino de $n$ nodos con reflexi\'on en $0$, $h(0\to n)=n^2$. \textbf{(4) Idea.} $\pi$ satisface el balance detallado $\pi_u/\deg u=\pi_v/\deg v$ y la esperanza del retorno es $1/\pi_v$ (teorema de renovaci\'on); la f\'ormula de conmutaci\'on sale de la analog\'ia con redes el\'ectricas (leyes de Kirchhoff). \textbf{(5) CP.} $O(n^3)$ resolviendo el sistema $h(u,v)=1+\frac1{\deg u}\sum_{w\sim u}h(w,v)$, o $O(n)$ en \'arboles. Conviene en problemas de ``caminata aleatoria sobre un grafo/\'arbol''.
+
+\item[Reflexi\'on y teorema del escrutinio] \textbf{(1) Contexto.} Dos candidatos reciben $a>b$ votos en orden aleatorio; probabilidad de que el ganador vaya siempre adelante (o nunca atr\'as); conteo de caminos que no tocan una barrera. \textbf{(2) Modelo.} Todas las $\binom{a+b}{a}$ secuencias equiprobables. \textbf{(3) Resultado.} $\Prob(\text{A siempre estrictamente adelante})=\frac{a-b}{a+b}$; $\Prob(\text{A nunca atr\'as})=\frac{a-b+1}{a+1}$; en particular, para $a{=}b{=}n$ la probabilidad de no pasar bajo cero es $\frac1{n+1}$ (n\'umeros de Catalan). \textbf{(4) Idea.} Reflexi\'on: los caminos de $A$ a $B$ que tocan la recta $y=-1$ se biyectan con los caminos de $A'$ (reflejado) a $B$, y $\binom{a+b}{a}-\binom{a+b}{a+1}$ cuenta los buenos; alternativa por rotaci\'on c\'iclica (lema de Dvoretzky--Motzkin). \textbf{(5) CP.} $O(1)$ con factoriales precalculados. Conviene en caminos con restricci\'on de signo o de barrera, y para depurar un DP $O(n^2)$ que cuenta lo mismo.
+
+\item[Linealidad de la esperanza en grafos aleatorios] \textbf{(1) Contexto.} Esperanza del n\'umero de componentes, aristas de un \'arbol aleatorio, o grados, cuando el grafo se subsamplea al azar. \textbf{(2) Modelo.} Indicadores $\mathbf 1_e$, $\mathbf 1_v$ sin necesidad de independencia entre ellos. \textbf{(3) Resultado.} Bosque con $n$ v\'ertices, aristas conservadas con prob. $p$: $\E[\#\text{comp}]=n-(n - 1)p$; v\'ertices conservados con prob. $p$: $\E[\#\text{comp}]=np-(n - 1)p^2$ (componentes $=V'-E'$ en un bosque). $G(n,p)$: $c(n)=1-\sum_{k=1}^{n-1}\binom{n-1}{k-1}c(k)(1 - p)^{k(n-k)}$ es $\Prob(\text{conexo})$ y $\E[\#\text{comp}]=\sum_k\binom nk c(k)(1 - p)^{k(n-k)}$. \'Arbol de expansi\'on uniforme: $\tau(G)=\det$ de cualquier cofactor del Laplaciano, y $\Prob(e\in T)=R_{\mathrm{ef}}(e)$. \'Arbol etiquetado uniforme ($n^{n-2}$, Cayley): $\deg v-1\sim\mathrm{Bin}(n - 2,\tfrac1n)$, $\E[\#\text{hojas}]=n(1 - \tfrac1n)^{n-2}\approx\tfrac ne$. \textbf{(4) Idea.} Para $c(n)$: fijar el componente del v\'ertice $1$ (tama\~no $k$, conexo, sin aristas hacia el resto); linealidad $\E[\sum\mathbf 1]=\sum\Prob$; Kirchhoff y propiedad de Prüfer. \textbf{(5) CP.} $O(n^2)$ para $c(n)$, $O(n^3)$ para el determinante, $O(n)$ para bosques. Conviene cuando el enunciado pide ``esperanza de cu\'antos...'' (siempre intentar descomponer en indicadores antes de un DP).
+
+\item[Linealidad en permutaciones aleatorias] \textbf{(1) Contexto.} Permutaci\'on uniforme de $n$ elementos; se piden puntos fijos, ciclos, r\'ecords o inversiones esperadas. \textbf{(2) Modelo.} $\sigma$ uniforme en $S_n$. \textbf{(3) Resultado.} $\E[\#\text{puntos fijos}]=1$; $\E[\#\text{ciclos}]=H_n$; $\E[\#\text{r\'ecords}]=H_n$ (el $i$-\'esimo es r\'ecord con prob. $\frac1i$, independientes); $\E[\#\text{inversiones}]=\frac{n(n-1)}4$; $\E[\text{longitud del ciclo de }1]=\frac{n+1}2$; $\Prob(\text{sin puntos fijos})=\frac{D_n}{n!}\to\frac1e$ con $D_n=n!\sum_{k=0}^n\frac{(-1)^k}{k!}$. \textbf{(4) Idea.} Indicadores $\mathbf 1[\sigma(i){=}i]$ con $\Prob=\frac1n$; $\mathbf 1[\text{par }(i,j)\text{ invertido}]$ con prob. $\frac12$ por simetr\'ia; la longitud del ciclo de $1$ es uniforme en $\{1,\dots,n\}$; inclusi\'on--exclusi\'on para $D_n$. \textbf{(5) CP.} $O(1)$ o $O(n)$ para sumar. Conviene siempre que haya simetr\'ia entre elementos.
+
+\item[Rachas, patrones y f\'ormula de Conway] \textbf{(1) Contexto.} Esperanza de lanzamientos hasta ver $k$ \'exitos seguidos, o hasta ver un patr\'on $s$ (HHT, ABRACADABRA); probabilidad de que un patr\'on aparezca antes que otro. \textbf{(2) Modelo.} Ensayos Bernoulli($p$) (o letras iid), $T_s$ = primer tiempo en que $s$ aparece. \textbf{(3) Resultado.} Racha de $k$ \'exitos: $\E[T]=\sum_{j=1}^k p^{-j}=\frac{1-p^k}{(1-p)p^k}$. Patr\'on $s$ con letras iid: $\E[T_s]=\sum_{\ell:\ \mathrm{pref}_\ell(s)=\mathrm{suf}_\ell(s)}\frac1{\Prob(\mathrm{pref}_\ell(s))}$ (suma sobre los bordes de $s$, incluido $\ell{=}|s|$); moneda justa: $\sum 2^\ell$. Penney (moneda justa): con $L(X,Y)=\sum_k2^{k-1}[\text{los \'ultimos }k\text{ de }X=\text{los primeros }k\text{ de }Y]$, $\Prob(A\text{ antes que }B)=\frac{L(B,B)-L(B,A)}{(L(A,A)-L(A,B))+(L(B,B)-L(B,A))}$. \textbf{(4) Idea.} Racha: $E_k=E_{k-1}+1+(1 - p)E_k$ (si falla, se reinicia). Patr\'on: casino con apuestas justas, un jugador entra en cada instante y apuesta todo a la siguiente letra; el capital total al detener es $\sum_\ell1/\Prob(\mathrm{pref}_\ell)$ para los bordes (martingala y parada opcional). \textbf{(5) CP.} $O(k)$ o $O(1)$ con serie geom\'etrica; patrones: bordes con KMP/Z en $O(|s|)$; ``primero en aparecer'' con dos patrones se resuelve con $L$ en $O(|A|+|B|)$. Conviene en problemas con reinicio condicional (falla $\Rightarrow$ volver al inicio de un autómata).
+
+\item[Reinicios geom\'etricos e identidad de Wald] \textbf{(1) Contexto.} Se repite un intento (que cuesta tiempo aleatorio) hasta que uno tiene \'exito; se pide el costo total esperado. \textbf{(2) Modelo.} Intentos iid con costo $C_i$ (incluye fallos) y \'exito con prob. $q>0$; $N$ = n\'umero de intentos, $T=\sum_{i\le N}C_i$. \textbf{(3) Resultado.} $\E[N]=\frac1q$ y $\E[T]=\E[N]\,\E[C]=\frac{\E[C]}{q}$; en general, para un tiempo de parada $\tau$ con $\E[\tau]<\infty$: $\E\bigl[\sum_{i\le\tau}X_i\bigr]=\E[\tau]\E[X_1]$. \textbf{(4) Idea.} $\sum_{i\le\tau}X_i=\sum_{i\ge1}X_i\mathbf 1[\tau\ge i]$ y $\{\tau\ge i\}$ es independiente de $X_i$ (depende solo de $X_1,\dots,X_{i-1}$); tomar esperanza. Contraejemplo: si $\tau$ ``mira hacia adelante'' (p. ej.\ $\tau$ = \'ultimo \'exito), Wald falla. \textbf{(5) CP.} $O(1)$. Conviene en ``estrategia con reintentos'' y para cerrar DP con autoloop: $E=c+(1 - q)E+\dots\Rightarrow E=\frac{c+\dots}{q}$.
+
+\item[Colisiones y paradoja del cumplea\~nos] \textbf{(1) Contexto.} Cu\'antos elementos caben en $N$ casillas (hash de 64 bits, c\'odigos, cumplea\~nos) antes de que haya colisi\'on. \textbf{(2) Modelo.} $n$ valores uniformes iid en $\{1,\dots,N\}$. \textbf{(3) Resultado.} $\Prob(\text{sin colisi\'on})=\prod_{i=0}^{n-1}\bigl(1-\frac iN\bigr)\le e^{-n(n-1)/(2N)}$; $\E[\#\text{pares colisionados}]=\binom n2\frac1N$; $n\approx1.18\sqrt N$ da probabilidad $\tfrac12$; $\E[\text{tama\~no hasta 1.ª colisi\'on}]\approx\sqrt{\pi N/2}$. \textbf{(4) Idea.} Producto de probabilidades condicionales, $1-x\le e^{-x}$, y linealidad con indicadores de pares. \textbf{(5) CP.} $O(1)$ para estimar error de hashing (p. ej.\ $n=10^6$ con $N=2^{64}$: error $\approx\frac{n^2}{2N}\approx3\cdot10^{-8}$). Conviene al elegir m\'odulos/bases de hashing y al analizar algoritmos aleatorizados.
+
+\item[Test polinomial (Schwartz--Zippel) y verificaci\'on aleatoria] \textbf{(1) Contexto.} Comprobar si dos expresiones/matrices son iguales (identidad polin\'omica, $AB=C$, igualdad de multiconjuntos) sin calcularlas por completo. \textbf{(2) Modelo.} $P\not\equiv0$ de grado total $d$ sobre un cuerpo $F$; $r$ uniforme en $S^k$, $S\subseteq F$. \textbf{(3) Resultado.} $\Prob(P(r)=0)\le\frac d{|S|}$; Freivalds: si $AB\ne C$ y $x\in\{0,1\}^n$ uniforme, $\Prob(ABx=Cx)\le\frac12$ (error $2^{-t}$ con $t$ repeticiones). \textbf{(4) Idea.} Inducci\'on en el n\'umero de variables: un polinomio univariado no nulo de grado $d$ tiene $\le d$ ra\'ices; fijar las dem\'as variables y condicionar. \textbf{(5) CP.} Freivalds $O(n^2)$ por prueba frente a $O(n^3)$; hashing polinomial de cadenas con base aleatoria. Conviene para verificar resultados caros con error unilateral controlado.
+
+\item[Problema de la secretaria (parada \'optima)] \textbf{(1) Contexto.} Se ven $n$ candidatos en orden aleatorio y hay que aceptar o rechazar al instante; se quiere maximizar la probabilidad de elegir el mejor. \textbf{(2) Modelo.} Orden uniforme; estrategia: rechazar los primeros $r - 1$ y aceptar el primero mejor que todos los anteriores. \textbf{(3) Resultado.} $\Prob(\text{\'exito}_r)=\frac{r-1}n\sum_{j=r}^n\frac1{j-1}$ para $r\ge2$; el \'optimo es $r^\ast\approx\frac ne$ con probabilidad $\to\frac1e$. \textbf{(4) Idea.} El mejor est\'a en la posici\'on $j$ con prob. $\frac1n$, y se acepta si el mejor de los $j - 1$ anteriores est\'a entre los primeros $r - 1$ (prob. $\frac{r-1}{j-1}$); optimizar sobre $r$. \textbf{(5) CP.} $O(n)$ para probar todos los $r$; para variantes (valores conocidos, costos) se usa DP hacia atr\'as sobre la ``esperanza de seguir''. Conviene en parada \'optima: $V_i=\max(\text{aceptar},\E[V_{i+1}])$.
+
+\item[Bayes con hip\'otesis discretas] \textbf{(1) Contexto.} Hay $k$ ``tipos'' posibles del sistema (dado justo/cargado, jugador fuerte/d\'ebil) y se observan resultados. \textbf{(2) Modelo.} Prior $\pi_h$, verosimilitudes $\ell_h(x)$. \textbf{(3) Resultado.} $\Prob(h\mid x_{1:i})=\frac{\pi_h\prod_{j\le i}\ell_h(x_j)}{\sum_{h'}\pi_{h'}\prod_{j\le i}\ell_{h'}(x_j)}$ y predicci\'on $\Prob(x_{i+1}\mid x_{1:i})=\sum_h\Prob(h\mid x_{1:i})\,\ell_h(x_{i+1})$. \textbf{(4) Idea.} Ley de probabilidad total sobre las hip\'otesis y regla de Bayes; el denominador es la verosimilitud marginal. \textbf{(5) CP.} $O(k)$ por observaci\'on; trabajar con logaritmos o renormalizar para evitar underflow, y para respuestas modulares multiplicar por inversos. Conviene cuando el enunciado dice ``con probabilidad $\pi_h$ el sistema es de tipo $h$'' (mezcla discreta, el an\'alogo discreto de Laplace).
+
+\item[Otros patrones que conviene tener a mano]  \textbf{Esperanza condicionada:} $\E[X]=\E[\E[X\mid Y]]$ para dividir en casos; \textbf{varianza total:} $\Var X=\E[\Var(X\mid Y)]+\Var(\E[X\mid Y])$. \textbf{Funciones generadoras:} $G_X(z)=\E[z^X]$ convierte sumas independientes en productos (convoluci\'on con FFT/NTT) y da $\E[X]=G_X'(1)$. \textbf{Cotas de cola:} Markov $\Prob(X\ge a)\le\frac{\E X}a$, Chebyshev $\Prob(|X-\mu|\ge k\sigma)\le\frac1{k^2}$, Chernoff para sumas de Bernoulli: $\Prob(X\ge(1 + \delta)\mu)\le e^{-\delta^2\mu/3}$ ($0<\delta\le1$), para justificar algoritmos aleatorizados y heur\'isticas. \textbf{Lema de Borel--Cantelli / m\'etodo probabil\'istico:} si $\E[X]=\mu$ existe un objeto con $X\ge\mu$ y otro con $X\le\mu$ (cotas de tipo ``siempre existe un corte con $\ge m/2$ aristas''). \textbf{Desaleatorizaci\'on:} m\'etodo de esperanzas condicionales, escoger cada decisi\'on para no empeorar $\E[X\mid\text{decisiones previas}]$ y obtener un algoritmo determinista.
+
+\end{description}
+\clearpage
+
+
+
+\end{multicols*}
+
+
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Fundamentos del Espacio Probabilístico (Kolmogorov)}
+Para cualquier problema, operamos sobre un espacio de probabilidad $(\Omega, \mathcal{F}, \mathbb{P})$, donde:
+\begin{itemize}
+    \item $\Omega$ es el espacio muestral (el conjunto de todas las ejecuciones posibles de un algoritmo aleatorizado o juego).
+    \item $\mathcal{F}$ es una $\sigma$-álgebra sobre $\Omega$ (conjunto de eventos medibles).
+    \item $\mathbb{P}: \mathcal{F} \to [0, 1]$ es la medida de probabilidad.
+\end{itemize}
+Una \textbf{variable aleatoria} $X$ es una función medible $X: (\Omega, \mathcal{F}) \to (\mathbb{R}, \mathcal{B}(\mathbb{R}))$, donde $\mathcal{B}(\mathbb{R})$ es el álgebra de Borel sobre los reales.
+
+A partir de aquí, estos son los teoremas estructurales y cómo se manifiestan en ICPC.
+
+\section*{1. Funciones Borel-Medibles (LOTUS) y Momentos Superiores}
+\textbf{Definición Formal:} Sea $g: \mathbb{R} \to \mathbb{R}$ una función Borel-medible. El teorema conocido como la Ley del Estadístico Inconsciente (LOTUS) establece que el valor esperado de la variable aleatoria $Y = g(X)$ es:
+\[
+\mathbb{E}[g(X)] = \int_{-\infty}^{\infty} g(x) f_X(x) \, dx
+\]
+En contextos discretos (competitivas), esto colapsa a $\sum g(x)\mathbb{P}(X=x)$.
+
+\textbf{Insight y Aplicación en ICPC:} \\
+La linealidad de la esperanza $\mathbb{E}[X+Y] = \mathbb{E}[X] + \mathbb{E}[Y]$ no requiere independencia, pero $\mathbb{E}[X \cdot Y]$ sí la requiere. El error más común es asumir $\mathbb{E}[X^2] = \mathbb{E}[X]^2$. Cuando un problema te pide el valor esperado del \textbf{cuadrado} o \textbf{cubo} de una cantidad, debes descomponer $X$ en variables indicadoras $I_i \in \{0, 1\}$ y usar LOTUS:
+\[
+\mathbb{E}[X^2] = \mathbb{E}\left[\left(\sum I_i\right)^2\right] = \sum \mathbb{E}[I_i^2] + 2\sum_{i < j} \mathbb{E}[I_i I_j]
+\]
+\begin{itemize}
+    \item \textbf{Problema Típico:} \textbf{"Inversions after K swaps" (Variante de CF Div. 1)}.
+    \item \textbf{Implementación:} Computar $\mathbb{P}(I_i = 1 \cap I_j = 1)$ suele requerir programación dinámica bidimensional u optimizaciones con \textit{Matrix Exponentiation} en un sistema de $O(N^2)$ estados.
+\end{itemize}
+
+\section*{2. Filtraciones, Tiempos de Parada e Identidad de Wald}
+Respondiendo a tu corrección directa: para la identidad de Wald necesitamos un proceso riguroso.
+
+\textbf{Definición Formal:} Sea $\{X_i\}_{i \geq 1}$ una sucesión de variables aleatorias independientes e idénticamente distribuidas (i.i.d.), donde cada $X_i$ tiene la misma distribución que una variable prototipo $X$. Sea $\{\mathcal{F}_n\}$ su filtración natural $(\mathcal{F}_n = \sigma(X_1, \dots, X_n))$.
+
+Un \textbf{tiempo de parada} (stopping time) es una variable aleatoria discreta $T: \Omega \to \mathbb{N} \cup \{\infty\}$ tal que el evento $\{T = n\} \in \mathcal{F}_n$ (es decir, la decisión de detenerse en el paso $n$ depende solo de la información hasta el paso $n$).
+
+\textbf{Identidad de Wald:} Si $\mathbb{E}[|X|] < \infty$ y $\mathbb{E}[T] < \infty$, entonces la suma aleatoria $S_T = \sum_{i=1}^T X_i$ cumple:
+\[
+\mathbb{E}[S_T] = \mathbb{E}[T] \cdot \mathbb{E}[X]
+\]
+
+\textbf{Insight y Aplicación en ICPC:} \\
+Se utiliza para calcular el "costo esperado" o "daño esperado" en juegos donde la duración del juego $T$ es en sí misma aleatoria (por ejemplo, tiras un dado hasta que salga \textbf{6}, y en cada turno ganas una cantidad aleatoria $X_i$ de puntos). En lugar de calcular el DP conjunto de (Puntos, Turnos), la identidad de Wald desacopla el problema: calculas $\mathbb{E}[T]$ (generalmente modelado con Distribución Geométrica) y lo multiplicas por $\mathbb{E}[X]$.
+\begin{itemize}
+    \item \textbf{Problema Típico:} \textbf{"Collecting Bugs" (POJ 2151)} o problemas de la familia del \textit{Coupon Collector}.
+    \item \textbf{Complejidad:} Reduce un problema de estado infinito a dos cálculos independientes de $O(N)$ o incluso $O(1)$ con fórmulas cerradas.
+\end{itemize}
+
+\section*{3. Distribuciones Conjugadas y Actualización Bayesiana (Beta-Binomial)}
+Este es el núcleo matemático exacto de tu problema \textbf{"Door 1"}.
+
+\textbf{Definición Formal:} La distribución de probabilidad Beta, denotada como $\text{Beta}(\alpha, \beta)$ con $\alpha, \beta > 0$, es una distribución continua en $(0, 1)$ con función de densidad:
+\[
+f(p; \alpha, \beta) = \frac{p^{\alpha-1}(1-p)^{\beta-1}}{\text{B}(\alpha, \beta)}
+\]
+donde $\text{B}(\alpha, \beta) = \int_0^1 t^{\alpha-1}(1-t)^{\beta-1} dt$.
+
+\textbf{Teorema (Familias Conjugadas):} La distribución Beta es la \textit{conjugate prior} de la distribución Binomial. Si tenemos una probabilidad $p$ desconocida con distribución previa $p \sim \text{Beta}(\alpha, \beta)$, y realizamos ensayos de Bernoulli observando $s$ éxitos y $f$ fracasos ($n = s+f$), la distribución posterior de $p$ sigue siendo Beta:
+\[
+p \mid (s, f) \sim \text{Beta}(\alpha + s, \beta + f)
+\]
+
+\textbf{Insight y Aplicación en ICPC:} \\
+La "Regla de Sucesión de Laplace" es simplemente el caso especial donde el prior es Uniforme en $[0, 1]$. Matemáticamente, la Uniforme $\mathcal{U}(0,1)$ es exactamente $\text{Beta}(1, 1)$.
+
+Tras observar $s$ éxitos y $f$ fracasos, la posterior es $\text{Beta}(1+s, 1+f)$. La esperanza matemática de una distribución $\text{Beta}(\alpha, \beta)$ es $\frac{\alpha}{\alpha+\beta}$.
+
+Por lo tanto, la probabilidad marginal esperada del siguiente éxito es:
+\[
+\mathbb{E}[p] = \frac{s + 1}{s + f + 2}
+\]
+\begin{itemize}
+    \item \textbf{Implementación en el Problema:} Al saber que el parámetro evoluciona según un proceso markoviano de conteos, evitas integrar en tu DP. Tu estado en "Door 1" solo necesita ser DP(hora, baterias\_actuales, encuentros\_gigante). La probabilidad $p$ del gigante en ese estado está completamente definida algebraicamente por $\frac{\text{encuentros} + 1}{\text{hora} + 2}$.
+\end{itemize}
+
+\section*{4. Cadenas de Markov Absorbentes y la Matriz Fundamental}
+Cuando abandonamos los DAGs y entramos a grafos con ciclos, el enfoque de DP recursivo puro se rompe por dependencias circulares.
+
+\textbf{Definición Formal:} Sea una Cadena de Markov discreta con estados transitorios y absorbentes. Su matriz de transición en forma canónica por bloques es:
+\[
+P = \begin{pmatrix} Q & R \\ 0 & I \end{pmatrix}
+\]
+donde $Q$ representa las transiciones entre estados transitorios, $R$ las transiciones de transitorio a absorbente, e $I$ es la matriz identidad.
+
+\textbf{Teorema:} La matriz fundamental $N$ se define como $N = \sum_{k=0}^{\infty} Q^k = (I - Q)^{-1}$.
+
+Cada entrada $N_{i,j}$ representa el número esperado de visitas al estado transitorio $j$ antes de la absorción, dado que el proceso comenzó en el estado $i$. El tiempo esperado de absorción (número de pasos) partiendo de $i$ es la $i$-ésima entrada del vector $\mathbf{t} = N \mathbf{1}$ (donde $\mathbf{1}$ es un vector columna de unos).
+
+\textbf{Insight y Aplicación en ICPC:} \\
+Si un problema te pide el número esperado de pasos para ganar un juego complejo donde puedes "retroceder" o "perder turnos", estás buscando $\mathbf{t}$.
+\begin{itemize}
+    \item \textbf{Trade-off de Diseño:} Invertir la matriz $(I-Q)$ requiere Eliminación Gaussiana generalizada que corre en $O(V^3)$. Esto restringe el tamaño del grafo de estados a $V \leq 500$. Si la matriz es rala (sparse) o tiene estructura de banda, puedes resolver el sistema lineal iterativamente o usar DP con precisión requerida flotante (ej. iterar hasta que la norma del error sea menor a $10^{-9}$).
+    \item \textbf{Problema Típico:} \textbf{"Game of Goose" (Cualquier Regional/WF con tableros circulares y trampas)}.
+\end{itemize}
+
+Para alcanzar el nivel de dominio que exige una \textbf{World Finals de la ICPC} o resolver consistentemente los problemas más densos de \textbf{Codeforces Div. 1}, debemos expandir tu arsenal probabilístico con herramientas avanzadas de la teoría de procesos estocásticos y la combinatoria analítica.
+
+A continuación, formalizamos los teoremas avanzados omitidos, detallando su espacio de medida, su comportamiento algebraico y la heurística exacta que te indicará cuándo utilizarlos.
+
+\section*{5. Teorema de Parada Opcional de Doob (Martingalas)}
+Cuando un proceso aleatorio posee una propiedad de "juego justo", las técnicas estándar de programación dinámica (DP) o cadenas de Markov colapsan debido a la infinitud del espacio de estados o la complejidad de las transiciones. Aquí es donde las martingalas simplifican el problema radicalmente.
+
+\subsection*{Definición Formal}
+Sea $(\Omega, \mathcal{F}, \mathbb{P})$ un espacio de probabilidad equipado con una filtración $\{\mathcal{F}_n\}_{n \geq 0}$. Un proceso estocástico $\{M_n\}_{n \geq 0}$ adaptado a la filtración es una \textbf{martingala} si para todo $n \geq 0$:
+\begin{itemize}
+    \item $\mathbb{E}[|M_n|] < \infty$
+    \item $\mathbb{E}[M_{n+1} \mid \mathcal{F}_n] = M_n$ con probabilidad 1.
+\end{itemize}
+
+\subsection*{Teorema de Parada Opcional de Doob (OST)}
+Sea $\{M_n\}_{n \geq 0}$ una martingala y $T$ un tiempo de parada respecto a $\{\mathcal{F}_n\}$. Si se cumple al menos una de las siguientes condiciones:
+\begin{itemize}
+    \item $T$ está acotado casi seguramente ($T \le C$ para alguna constante $C$).
+    \item $|M_{n \land T}|$ está acotado uniformemente por una variable integrable.
+    \item $\mathbb{E}[T] < \infty$ y existe $K$ tal que $|M_{n+1} - M_n| \le K$ para todo $n < T$.
+\end{itemize}
+Entonces, el valor esperado de la martingala en el tiempo de parada es igual a su valor esperado inicial:
+\[
+\mathbb{E}[M_T] = \mathbb{E}[M_0]
+\]
+
+\subsection*{Insight y Aplicación en ICPC}
+\textbf{¿Cuándo identificarlo?} El problema involucra un juego de apuestas, un \textit{Random Walk} asimétrico en múltiples dimensiones, o la generación de cadenas de caracteres aleatorias (problemas de "tipear un string hasta que aparezca el patrón $S$") y te piden el tiempo esperado de finalización $\mathbb{E}[T]$.
+\begin{itemize}
+    \item \textbf{El "Truco" de Construcción:} Diseñas una martingala artificial de la forma $M_n = X_n - n \cdot \mathbb{E}[\Delta]$, o basándote en potencias si el proceso es multiplicativo. Al aplicar el OST, resuelves directamente para $\mathbb{E}[T]$ planteando la ecuación $\mathbb{E}[M_T] = \mathbb{E}[M_0]$.
+    \item \textbf{Problema de Ejemplo:} \textbf{"K-Consecutive Heads"} o \textbf{"String Matching Games" (Codeforces Div. 1)}. Encontrar el número esperado de lanzamientos de moneda hasta obtener el patrón HTH.
+\end{itemize}
+
+\section*{6. Funciones Generatrices de Probabilidad (PGF) y Convolución}
+Cuando necesitas calcular no solo la esperanza, sino la distribución de probabilidad exacta de una suma de variables independientes donde los estados tradicionales de DP causarían \textit{Time Limit Exceeded} ($O(N \cdot K)$).
+
+\subsection*{Definición Formal}
+Sea $X$ una variable aleatoria discreta que toma valores en los enteros no negativos $\mathbb{N}_0$. La \textbf{Función Generatriz de Probabilidad (PGF)} de $X$ es una función analítica definida como la serie de potencias formal:
+\[
+G_X(z) = \mathbb{E}[z^X] = \sum_{k=0}^{\infty} \mathbb{P}(X=k) z^k
+\]
+La serie converge absolutamente para todo $z \in \mathbb{C}$ con $|z| \le 1$.
+
+\subsection*{Propiedades y Teoremas Clave}
+\begin{itemize}
+    \item \textbf{Convolución:} Si $X$ e $Y$ son variables aleatorias \textbf{independientes}, la PGF de su suma es el producto algebraico de sus PGFs:
+    \[
+    G_{X+Y}(z) = G_X(z) \cdot G_Y(z)
+    \]
+    \item \textbf{Recuperación de Momentos:} Los momentos de $X$ se obtienen evaluando las derivadas de $G_X(z)$ en $z=1$:
+    \[
+    \mathbb{E}[X] = G_X'(1), \quad \mathbb{E}[X(X-1)] = G_X''(1)
+    \]
+\end{itemize}
+
+\subsection*{Insight y Aplicación en ICPC}
+\textbf{¿Cuándo identificarlo?} Te piden calcular la probabilidad de que la suma de $N$ variables independientes (como lanzar $N$ dados deformes con distintas caras) sea exactamente igual a $K$, con $N, K \le 10^5$.
+\begin{itemize}
+    \item \textbf{El "Path" Mental:} Una DP clásica tardaría $O(N \cdot K)$, lo cual es inviable. Al modelar cada dado como un polinomio $P_i(z) = \sum p_k z^k$, el problema se reduce a calcular el producto de polinomios $\prod_{i=1}^N P_i(z)$.
+    \item \textbf{Optimización:} Utilizas un enfoque de \textit{Divide and Conquer} combinado con la \textbf{Transformada Rápida de Fourier (FFT / NTT)} para multiplicar los polinomios, reduciendo la complejidad total a un óptimo:
+    \[
+    O(K \log K)
+    \]
+\end{itemize}
+
+\section*{7. Desigualdades de Concentración (Tail Bounds)}
+En problemas de algoritmos aleatorizados o estructuras de datos probabilísticas (como \textit{Skip Lists} o \textit{Treaps} modificados), a veces no necesitas el valor exacto de la probabilidad, sino garantizar que la probabilidad de fallo sea infinitesimalmente pequeña.
+
+\subsection*{Teorema (Desigualdad de Chernoff)}
+Sean $X_1, X_2, \dots, X_n$ variables aleatorias de Bernoulli independientes (no necesariamente idénticas) tales que $\mathbb{P}(X_i = 1) = p_i$. Sea $X = \sum_{i=1}^n X_i$ y $\mu = \mathbb{E}[X] = \sum p_i$. Para cualquier $\delta > 0$:
+\[
+\mathbb{P}(X \ge (1+\delta)\mu) \le \left( \frac{e^\delta}{(1+\delta)^{1+\delta}} \right)^\mu
+\]
+
+\subsection*{Teorema (Desigualdad de Azuma-Hoeffding)}
+Sea $\{M_n\}_{n=0}^m$ una martingala respecto a una filtración, tal que existen constantes $c_n > 0$ que acotan las diferencias casi seguramente: $|M_n - M_{n-1}| \le c_n$. Entonces para cualquier $t > 0$:
+\[
+\mathbb{P}(M_m - M_0 \ge t) \le \exp\left( -\frac{2t^2}{\sum_{n=1}^m c_n^2} \right)
+\]
+
+\subsection*{Insight y Aplicación en ICPC}
+\textbf{¿Cuándo identificarlo?} Problemas interactivos o de diseño de algoritmos donde juegas contra un "adversario adaptativo". Te piden diseñar una estrategia que gane con una probabilidad acumulada de $1 - 10^{-9}$.
+\begin{itemize}
+    \item \textbf{Uso Teórico:} Te permite demostrar por qué un algoritmo codicioso aleatorizado o un muestreo de Monte Carlo con un número fijo de iteraciones (ej. $K = 100$ pruebas) es suficiente para pasar todos los casos de prueba ocultos del juez sin dar \textit{Wrong Answer}.
+    \item \textbf{Problema de Ejemplo:} Problemas de geometría computacional donde se realiza un \textit{Randomized Incremental Construction} (como calcular el \textit{Enclosing Circle} mínimo en $O(N)$ esperado).
+\end{itemize}
+
+\section*{8. El Principio de Inclusión-Exclusión Probabilístico (Sieve Methods)}
+Cuando los eventos cuyas probabilidades deseas calcular están fuertemente interconectados por condiciones de intersección.
+
+\subsection*{Definición Formal}
+Sea $(\Omega, \mathcal{F}, \mathbb{P})$ el espacio de medida y $A_1, A_2, \dots, A_n \in \mathcal{F}$ un conjunto de eventos finitos. La medida de la unión de estos eventos está dada por:
+\[
+\mathbb{P}\left(\bigcup_{i=1}^n A_i\right) = \sum_{i=1}^n \mathbb{P}(A_i) - \sum_{i<j} \mathbb{P}(A_i \cap A_j) + \dots + (-1)^{n-1} \mathbb{P}\left(\bigcap_{i=1}^n A_i\right)
+\]
+
+\subsection*{Insight y Aplicación en ICPC}
+\textbf{¿Cuándo identificarlo?} Te piden la probabilidad de que una estructura (como un grafo aleatorio o una permutación) cumpla \textbf{al menos una} de varias propiedades malas, o que sea completamente "válida" (ninguna propiedad mala ocurre).
+\begin{itemize}
+    \item \textbf{El "Path" Mental:} Calcular la probabilidad directa es un problema NP-hard debido a las dependencias. Sin embargo, calcular la probabilidad de la intersección $\mathbb{P}(A_i \cap A_j \cap \dots)$ suele ser trivial si la intersección fija ciertos elementos de la estructura.
+    \item \textbf{Integración con Bitmask:} Si $n \le 20$, puedes iterar explícitamente sobre todas las máscaras de bits ($2^n$) para calcular el término del principio de inclusión-exclusión. Si $n$ es grande pero las intersecciones solo dependen del tamaño del subconjunto elegido, se utiliza DP para agrupar los términos por cardinalidad.
+    \item \textbf{Problema de Ejemplo:} \textbf{"Derrangements" Probabilísticos} o \textbf{"Counting Graphs" (Latin American Regionals)}.
+\end{itemize}
+
+\section*{Hoja de Ruta de Prerrequisitos Avanzados para el Equipo}
+Para consolidar esto y evitar errores de precisión o desbordamiento en el código:
+
+\begin{verbatim}
+[Teoría de la Medida] ──> [Espacio de Kolmogorov] ──> [Esperanza Condicional Formal]
+                                                               │
+       ┌────────────────────────┬──────────────────────────────┴────────────────────────┐
+       ▼                        ▼                                                       ▼
+[Martingalas (OST)]    [Familias Conjugadas (Beta-Binomial)]             [Análisis Polinomial (PGF)]
+       │                        │                                                       │
+       ▼                        ▼                                                       ▼
+Stopping Times discretos     Cálculo analítico de transiciones sin bucles            Multiplicación vía NTT/FFT
+\end{verbatim}
+
+\begin{itemize}
+    \item \textbf{Aritmética Modular en Probabilidad:} Asegúrense de dominar el cálculo de \textbf{Inversos Modulares} ($\text{mod } 10^9+7$). Nunca operen con \texttt{double} si el problema pide el resultado como $P \cdot Q^{-1} \pmod M$.
+    \item \textbf{Propiedad de Markov sin Memoria (Memoryless):} Para variables geométricas discretas, recordar siempre que $\mathbb{P}(X > n+m \mid X > n) = \mathbb{P}(X > m)$. Esto simplifica drásticamente el rediseño de estados en DPs complejas.
+\end{itemize}
+
+
+
+\end{document}

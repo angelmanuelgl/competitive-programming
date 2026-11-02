@@ -5,7 +5,7 @@
 *.a
 *.so
 *.dylib
-*.in
+
 
 # Temporary & Editor backup files
 *.save-failed
@@ -14,13 +14,13 @@
 .DS_Store
 Thumbs.db
 
-# Test case clutter
+# Test case 
+*.in
 in.txt
 inD.txt
 casosE.txt
 texto.txt
 xd.cp
-
 
 # IDE & Build folders
 .vscode/
@@ -28,4 +28,18 @@ xd.cp
 build/
 
 
+# Recursos privados
 extraDocs/
+
+# Archivos auxiliares de LaTeX
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
+
+# Directorios y archivos de minted
+_minted-*/
+_minted/
+*.minted
+EOF

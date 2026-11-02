@@ -1,0 +1,186 @@
+\usepackage[utf8]{inputenc}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+\usepackage[landscape, left=0.45cm, right=0.45cm, top=0.55cm, bottom=0.45cm, includehead, headheight=14pt]{geometry}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[italicdiff]{physics}
+\usepackage{textcomp}
+\usepackage{amsthm, amssymb, amsmath, amsfonts, bbm, mathtools}
+\usepackage{minted}
+\usepackage{enumerate}
+\usepackage[shortlabels]{enumitem}
+\usepackage{titling}
+\usepackage{lmodern} %optimiza algunas fuentes
+\usepackage{float}
+\usepackage{mathrsfs}
+\usepackage{wasysym}
+\usepackage{csquotes}
+\usepackage{dsfont}
+\usepackage{caption}
+\decimalpoint
+\usepackage{graphicx}
+\renewcommand{\baselinestretch}{1}
+\usepackage{environ}
+
+\usepackage{tocloft}
+\usepackage{multicol}
+\usepackage[skip=0pt]{parskip}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+%%%%%%%%%%%%%%%%%% tabla de contenidos %%%%%%%%%%%%%%%%%%
+\setlength{\cftbeforesecskip}{1pt} % Espacio entre secciones en el índice
+\renewcommand{\cftsecdotsep}{\cftdotsep} % Poner puntitos a las secciones principales
+\renewcommand{\cftsecfont}{\normalfont\footnotesize} % Letra más chica
+\renewcommand{\cftsecpagefont}{\normalfont\footnotesize}
+\renewcommand{\cftsubsecfont}{\normalfont\scriptsize}
+\renewcommand{\cftsubsecpagefont}{\normalfont\scriptsize}
+
+\newcommand{\Pa}[1]{\left( #1 \right)}
+\newcommand{\PA}[1]{\big( #1 \big)}
+
+%Images path
+\graphicspath{{img/}}
+
+%%%%%%%%%%%%%%%%%% d EXTENDED VERSION %%%%%%%%%%%%%%%%%%
+\usepackage{etoolbox}
+\newif\ifextendedversion
+\extendedversiontrue   % Descomenta para la versión EXTENDIDA (Final Nacional)
+% \extendedversionfalse  % Descomenta para la versión COMPACTA (Hiperregional)
+
+\newcommand{\ext}[1]{\ifextendedversion#1\fi}
+
+% 3. Bloque largo / Entorno (múltiples párrafos, listas, problemas tipo)
+\NewEnviron{extended}{
+    \ifextendedversion
+        \vspace{0.3em}
+        \begingroup
+        \small\color{black!80}
+        \vspace{0.2em}
+        \noindent\textit{\footnotesize Versión Extendida:} \vspace{-1mm}\par
+        \BODY
+        \vspace{0.2em}
+        \endgroup
+        \vspace{0.3em}
+    \fi
+}
+
+
+%%%%%%%%%%%%%%%%%% Minted %%%%%%%%%%%%%%%%%%
+% \fontsize{tamaño de letra}{espacio entre líneas}\selectfont
+\newcommand{\codesize}{\fontsize{7pt}{8pt}\selectfont} % tamfuente e interlineado para 9pt en el doc con extarticle
+\setminted{
+    fontsize=\codesize,      % Usa \scriptsize o \tiny si tienes muy buena vista
+    baselinestretch=0.85,      % Comprime el espacio vertical entre líneas
+    linenos=true,              % Números de línea (esenciales para debuggear en papel)
+    numbersep=3pt,             % Pega los números de línea al código
+    xleftmargin=12pt,          % Reduce el margen izquierdo que minted agrega por defecto
+    breaklines=true,           % Ajuste de línea automático si te pasas del ancho
+    breakanywhere=true,        % Rompe la línea incluso si no hay espacios
+    tabsize=2,                 % Indentación corta (vital en 3 columnas)
+    style=vs,                  % Tema visual claro y de alto contraste al imprimir
+    stripall=true              % Elimina líneas en blanco al inicio y al final del archivo
+}
+
+% \inputcode{lenguaje}{ruta}{nombre_a_mostrar}
+\newcommand{\inputcode}[3]{
+    {\raggedleft \scriptsize \ttfamily \detokenize{#3} \par} 
+    \vspace{-4pt}
+    \inputminted[firstline=1, firstnumber=1]{#1}{#2}
+}
+
+%%%%%%%%%%%%%%%%%% Explicacion de codigo %%%%%%%%%%%%%%%%%%
+
+% \algoinfo{Tiempo}{Memoria}{Explicación rápida}
+\newcommand{\algoinfo}[3]{
+    % \vspace{-2pt}
+    \vspace{-1pt}
+    {\fontsize{8pt}{9pt}\selectfont \textbf{T:} $O(#1)$ $\mid$ \textbf{M:} $O(#2)$ $\mid$ \textit{#3} \par}
+    % \vspace{2pt}
+}
+
+%%%%%%%%%%%%%%%%%% Numeraciones %%%%%%%%%%%%%%%%%%
+% Figuras numeradas
+\usepackage{chngcntr}
+\counterwithin{figure}{section}
+
+% Ecuaciones numeradas
+\numberwithin{equation}{section}
+
+\allowdisplaybreaks
+
+%%%%%%%%%%%%%%%%%% Definiciones de mate %%%%%%%%%%%%%%%%%%
+\renewcommand{\theenumi}{\alph{enumi}}
+\renewcommand{\labelenumi}{{\theenumi})}
+\renewcommand\qedsymbol{$\blacksquare$}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Zm}[1]{\mathbb{Z}/ #1 \mathbb{Z}}
+\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
+
+%%%%%%%%%%%%%%%%%% Comandos especiales de mate %%%%%%%%%%%%%%%%%%
+\newcommand{\pa}[1]{\left( #1 \right)}
+\newcommand{\br}[1]{\left[ #1 \right]}
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiter{\floor}\lfloor\rfloor
+\DeclarePairedDelimiter{\ceil}\lceil\rceil
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\ord}{ord}
+\newenvironment{solution}
+{\renewcommand\xqedsymbol{$\square$}\begin{proof}[Solución]}
+    {\end{proof}}
+
+%%%%%%%%%%%%%%%%%% Espaciado %%%%%%%%%%%%%%%%%%
+\setlength{\columnsep}{0.25cm} % Espacio minimo entre columnas
+\setlength{\columnseprule}{0.5pt} % Linea divisoria opcional para guiar la vista
+\setlength{\parindent}{0pt}
+\setlist[enumerate,1]{label=\arabic*., nosep}
+\setlist[itemize]{
+    noitemsep,
+    topsep=0pt,
+    leftmargin=* % Ajusta la sangría automáticamente al ancho del viñeta
+}
+\setlist[description]{noitemsep, topsep=0pt, parsep=2pt, itemsep=3pt, leftmargin=0pt}
+% \ newcommand{\noenter}[1]{\vspace{-2mm}}
+
+
+% \titlespacing*{comando}{izq}{arriba}{abajo}
+% Espaciado hiper-compacto
+\titlespacing*{\section}{0pt}{5pt}{3pt}
+\titlespacing*{\subsection}{0pt}{3pt}{1pt}
+\titlespacing*{\subsubsection}{0pt}{2pt}{1pt}
+
+% Jerarquía visual (Pensada para impresión monocromática de ICPC)
+
+% SECTION: MAYÚSCULAS y una línea negra sólida por debajo
+\titleformat{\section}{\normalfont\normalsize\bfseries}{}{0pt}{\MakeUppercase}[{\vspace{1pt}\titlerule[0.8pt]}]
+
+% SUBSECTION: Flecha indicadora, negrita (sin línea)
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{}{0pt}{$\blacktriangleright$\hspace{3pt}}
+
+% SUBSUBSECTION: Cursiva negrita y punto discreto (letra un poco más chica)
+\titleformat{\subsubsection}{\normalfont\small\bfseries\itshape}{}{0pt}{$\bullet$\hspace{3pt}}
+
+% Eliminar el salto de línea post-titulo (Run-in titles) si quieres compresión extrema:
+% \titlespacing*{\subsection}{0pt}{1pt}{1em} % El tercer valor en 'em' hace que el texto siga en la misma línea
+
+% Header
+\pagestyle{fancy}
+\headheight 14pt % Reducido de 25pt
+\fancyhead{}
+\fancyfoot{}
+\lhead{\textbf{Mas Reference - ICPC} $\mid$ Mäthgic Crüe $\mid$ UG-CIMAT $\mid$ \today} % Todo en una línea
+\rhead{ \textbf{Version Extra }- \textbf{Pág. \thepage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength\headsep{4pt} % Pegar el texto principal al header
+
+% Comprimir espacio vertical alrededor de ecuaciones
+\AtBeginDocument{
+  \setlength{\abovedisplayskip}{2pt}
+  \setlength{\belowdisplayskip}{2pt}
+  \setlength{\abovedisplayshortskip}{0pt}
+  \setlength{\belowdisplayshortskip}{0pt}
+}
