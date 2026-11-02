@@ -36,7 +36,6 @@ extraDocs/
 *.fdb_latexmk
 *.fls
 *.log
-*.pdf
 
 # Directorios y archivos de minted
 _minted-*/

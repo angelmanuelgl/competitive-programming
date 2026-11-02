@@ -1,5 +1,5 @@
-%latexmk -pdf -shell-escape -interaction=nonstopmode masReferencia.tex
-% latexmk -pdf -shell-escape -halt-on-error Referencia_ICPC.tex
+% latexmk -pdf -shell-escape -interaction=nonstopmode masReferencia.tex
+% latexmk -pdf -shell-escape -halt-on-error masReferencia.tex
 \documentclass[8pt, spanish, mexico, letterpaper]{extarticle}
 \usepackage[T1]{fontenc}
 \input{preambulo.tex}
@@ -118,11 +118,10 @@ En el archivo \texttt{\textasciitilde/.bashrc} (o \texttt{\textasciitilde/.zshrc
 \begin{minted}{cpp}
 alias gc='g++ -std=c++17 -O3 -Wall -Wextra -DLOCAL'
 alias g='g++ -std=c++17 -O3 -Wall -Wextra'
+source ~/.zshrc
 \end{minted}
-y refrescar \texttt{source ~/.zshrc}
 
-
-\columnbreak
+% \columnbreak
 \subsection{Memoria disponible}
 
 \begin{minted}{cpp} 
@@ -189,14 +188,21 @@ ulimit -s unlimited       ulimit -s 1048576 // 1gb
 \(10! = 3{,}628{,}800\), \\
 Catalan:  \(C_{15}=9{,}694{,}845\), \(C_{19}=1{,}767{,}263{,}190\) (mayor en \texttt{int}).
 
-
-\subsubsection*{Máximo número de divisores}
+\begin{description}
+\item[Máximo número de divisores]
 $n\le10^6$: 240 ($720720$) \quad $n\le 10^9$: 1344 ($735134400$) \quad $n\le10^{18}$: 103,680 ($897612484786617600$).
 
-\subsubsection*{Primos y módulos comunes}
+\item[Primos y módulos comunes]
 \(10^9+7\), \quad \(998{,}244{,}353 = 119\cdot2^{23}+1\) (NTT), \quad \(10^9+9\).
+\end{description}
 
+\subsection{Primos (1--1000)(168)}
+\tiny
+2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997, 
 
+\normalsize
+
+\columnbreak
 \subsubsection*{Cantidades de primos $\le n$:}
 \begin{center}
 
@@ -219,15 +225,18 @@ $10^8$ & 5,761,455 & $10^{15}$ & 29,844,570,422,669
 
 
 
-\subsection*{Equivalencias}
-En general, para enteros \textbf{positivos} \texttt{int a,b,x} (o \texttt{long long}):
-$$ \texttt{if( a*b > x )} \equiv \texttt{if( a > x / b )}$$
-\textbf{Con \texttt{>=}} $\texttt{if( a*b >= x )}\equiv$
-$$ \texttt{if(a >= (x + b - 1) / b)}
-    \equiv \texttt{if(a > (x - 1) / b)} $$
+\subsection*{Aritmética entera}
 
-\subsubsection*{Aritmética entera}
+
+
+
+
 \begin{itemize}
+\item Para enteros \textbf{positivos} \texttt{int a,b,x} (o \texttt{long long}):
+$$ \texttt{if( a*b > x )} \equiv \texttt{if( a > x/b )}$$
+$$\texttt{if( a*b >= x )}\equiv
+\texttt{if(a >= (x+b-1) / b)}
+    \equiv \texttt{if(a > (x-1) / b)} $$
   \item Techo (positivos): con $a\ge1$
   $$ \lceil a/b\rceil = \texttt{(a + b - 1) / b} = \texttt{(a - 1) / b + 1}$$ 
   \item Módulo no negativo: \texttt{((a \% m) + m) \% m}. En C++ \texttt{-7 / 2 = -3} (trunca hacia 0) y \texttt{-7 \% 2 = -1}.

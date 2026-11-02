@@ -1,6 +1,6 @@
 \usepackage[utf8]{inputenc}
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
-\usepackage[landscape, left=0.45cm, right=0.45cm, top=0.55cm, bottom=0.45cm, includehead, headheight=14pt]{geometry}
+\usepackage[landscape, left=0.45cm, right=0.45cm, top=0.5cm, bottom=0.45cm, includehead, headheight=14pt]{geometry}
 \usepackage[spanish, es-tabla]{babel}
 \usepackage[table,xcdraw]{xcolor}
 \usepackage[italicdiff]{physics}
@@ -137,14 +137,10 @@
 \setlength{\columnsep}{0.25cm} % Espacio minimo entre columnas
 \setlength{\columnseprule}{0.5pt} % Linea divisoria opcional para guiar la vista
 \setlength{\parindent}{0pt}
-\setlist[enumerate,1]{label=\arabic*., nosep}
-\setlist[itemize]{
-    noitemsep,
-    topsep=0pt,
-    leftmargin=* % Ajusta la sangría automáticamente al ancho del viñeta
-}
-\setlist[description]{noitemsep, topsep=0pt, parsep=2pt, itemsep=3pt, leftmargin=0pt}
-% \ newcommand{\noenter}[1]{\vspace{-2mm}}
+\setlist{topsep=0pt, partopsep=0pt, parsep=0pt, itemsep=0.5pt, leftmargin=3mm}
+\setlist[enumerate]{label=\arabic*., leftmargin=3mm}
+\setlist[itemize]{leftmargin=2.5mm}
+\setlist[description]{leftmargin=0mm}
 
 
 % \titlespacing*{comando}{izq}{arriba}{abajo}

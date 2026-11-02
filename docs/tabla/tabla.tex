@@ -1,0 +1,115 @@
+% latexmk -pdf -shell-escape -interaction=nonstopmode tabla.tex
+% latexmk -pdf -shell-escape -halt-on-error tabla.tex
+
+\documentclass[landscape,a4paper,11pt]{article}
+\usepackage[margin=5mm]{geometry}
+\usepackage{array,tabularx,amssymb}
+\usepackage{pifont,amssymb}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+
+% Quitar margenes (impresora)
+% Tamaño oficio
+% 
+%
+%
+%
+%
+
+\newcommand{\casilla}[1]{$\square$\,{\tiny#1}}
+
+\usepackage{xcolor}\colorlet{gris}{blue!40!black!40!}
+
+\newcommand{\regla}[2][0.3]{\textcolor{gris}{\rule[-1pt]{#2mm}{#1pt}}}
+
+
+\newcommand{\campo}[2][31]
+{{\tiny#2:}\regla{#1}}
+
+\usepackage{pgffor}
+
+\newcommand{\lin}[1][1]{
+    \foreach \n in {1,...,#1}
+    {\regla{37} }
+}
+\newcommand{\linea}[1][1]{
+    \foreach \n in {1,...,#1}
+    {\regla[0.5]{5}\regla{32} }
+}
+\usepackage{fontawesome5}
+
+% \newcommand{\pensar}{\faBrain}       
+% \newcommand{\enpapel}{\faBookOpen}  
+% \newcommand{\tema}{\faTag}          
+% \newcommand{\descripcion}{\faBookOpen}     
+
+\newcommand{\tema}{Tema}
+\newcommand{\descripcion}{Desc}
+
+% \newcommand{\pensar}{Pensando}       
+% \newcommand{\enpapel}{EnPapel}  
+\newcommand{\pensar}{\textcolor{gris}{\faBrain}}       
+\newcommand{\enpapel}{\textcolor{gris}{\faPen}}  
+\newcommand{\atorado}{\textcolor{gris}{\faBan}} 
+
+\newcommand{\info}{
+\begin{minipage}[t]{\linewidth}
+    % --- TEMA ----
+    \campo{\tema}
+    \\[0.5mm]
+    \campo{\descripcion} 
+    \lin[4] 
+    \campo[8.5]{N} \campo[8.5]{M} \campo[8.5]{Q}
+    \\[1mm] 
+    % --- PROCESO ---
+    \casilla{\pensar} \,
+    \casilla{\atorado} \, 
+    \casilla{\enpapel} \,
+    \campo[10]{LPP}
+    % --- PROCESO 2---
+    \\[1mm]
+    \casilla{DEB} 
+    \casilla{TLE}
+    \casilla{MLE}
+    \casilla{WA}
+\end{minipage}
+}
+
+
+
+\newcommand{\celda}{
+\info
+
+\linea[18]
+% \rule{2pt}{50mm}
+}
+\newcommand{\celdadown}{
+% \rule{0pt}{50mm}
+\linea[18]
+\info
+}
+
+\newcommand{\letra}[2]{
+\textbf{\normalsize #1}\hspace{1mm}(#2)
+% \textbf{\normalsize #1 - $\mathcal{#1}$ - $\mathbb{#1}$}\,(#2)
+}
+\begin{document}
+\scriptsize
+% \linewidth
+
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{|*{7}{>{\centering\arraybackslash}X|}}
+  \hline
+  \letra{A}{1}& \letra{B}{2} & \letra{C}{3} & \letra{D}{4} & \letra{E}{5} & \letra{F}{6} & \letra{G}{7} \\ \hline
+  \celda&\celda&\celda&\celda&\celda&\celda&\celda
+  \\ \hline\hline
+
+
+    \celdadown&\celdadown&\celdadown&\celdadown&\celdadown&\celdadown&\celdadown
+    
+    \\\hline
+
+    \letra{H}{8} & \letra{I}{9} & \letra{J}{10} & \letra{K}{11} & \letra{L}{12} & \letra{M}{13} & \letra{N}{14}
+    \\ \hline
+\end{tabularx}
+\end{document}
